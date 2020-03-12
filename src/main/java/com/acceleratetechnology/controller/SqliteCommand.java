@@ -3,11 +3,13 @@ package com.acceleratetechnology.controller;
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
 import com.opencsv.*;
 import lombok.Cleanup;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.sqlite.JDBC;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashMap;
@@ -105,10 +107,6 @@ public class SqliteCommand extends AbstractCommand {
      */
     private static final String DELIM = "delim";
     /**
-     * Column header escape.
-     */
-    private static final String COL_HEADER = "colHeader";
-    /**
      * String data type. Need to indicate Strings in Database.
      */
     private static final String VARCHAR_2_255 = " VARCHAR2(255)";
@@ -165,21 +163,33 @@ public class SqliteCommand extends AbstractCommand {
                 String delim = getDefaultAttribute(DELIM_PARAMETER, DEFAULT_DELIM);
                 String headerFlag = getDefaultAttribute(DEST_HEADER_PARAMETER, DEFAULT_FALSE);
 
+                try {
+                    File queryFile = Paths.get(query).toFile();
+                    if (queryFile.exists() && queryFile.isFile()) {
+                        query = FileUtils.readFileToString(queryFile, UTF_8);
+                    }
+                } catch (InvalidPathException ignored) { }
+
+
                 HashMap<String, String> outFile = new HashMap<>();
                 if (destFile != null) {
                     outFile.put(FILE, destFile);
                     outFile.put(DELIM, delim);
-                    outFile.put(COL_HEADER, headerFlag);
                 } else {
                     outFile = null;
                 }
 
-                boolean returnFlag = returnString.equalsIgnoreCase("Y") || returnString.equalsIgnoreCase("YES") || returnString.equalsIgnoreCase("TRUE") || returnString.equalsIgnoreCase("T") || returnString.equals("1");
+                boolean returnFlag = isTrue(returnString);
+                boolean header = isTrue(headerFlag);
 
-                executeQuery(opDB, query, returnFlag, outFile);
+                executeQuery(opDB, query, returnFlag, outFile, header);
                 break;
             }
         }
+    }
+
+    private boolean isTrue(String returnString) {
+        return returnString.equalsIgnoreCase("Y") || returnString.equalsIgnoreCase("YES") || returnString.equalsIgnoreCase("TRUE") || returnString.equalsIgnoreCase("T") || returnString.equals("1");
     }
 
     /**
@@ -193,6 +203,7 @@ public class SqliteCommand extends AbstractCommand {
         logger.debug("Creating database " + dbName);
         logger.info("Successfully created database");
     }
+
     /**
      * Close specified Database.
      *
@@ -212,10 +223,11 @@ public class SqliteCommand extends AbstractCommand {
      * @param query      SQL request.
      * @param returnFlag If return response to a console or file.
      * @param outFile    Output File HashMap with file, delim and skip headers.
+     * @param header     Skip header or not.
      * @throws SQLException throws when database access error or other errors.
      * @throws IOException  thrown in case of an I/O error.
      */
-    public void executeQuery(String dbName, String query, boolean returnFlag, HashMap<String, String> outFile) throws SQLException, IOException {
+    public void executeQuery(String dbName, String query, boolean returnFlag, HashMap<String, String> outFile, boolean header) throws SQLException, IOException {
         @Cleanup Connection c = DriverManager.getConnection(JDBC_SQLITE + dbName);
         c.setAutoCommit(false);
         logger.debug("Opened database successfully");
@@ -241,14 +253,15 @@ public class SqliteCommand extends AbstractCommand {
             String delim;
             if (outFile == null || outFile.isEmpty()) {
                 logger.debug("No output file specified");
-                printHeader = true;
+                printHeader = header;
                 stream = new ByteArrayOutputStream();
                 writerString = new OutputStreamWriter(stream);
                 delim = DEFAULT_DELIM;
             } else {
-                String colHeader = outFile.get(COL_HEADER);
-                printHeader = colHeader.equalsIgnoreCase("TRUE") || colHeader.equalsIgnoreCase("T") || colHeader.equalsIgnoreCase("Y") || colHeader.equalsIgnoreCase("1");
-                writerString = new FileWriter(Paths.get(outFile.get(FILE)).toFile());
+                printHeader = header;
+                File file = Paths.get(outFile.get(FILE)).toAbsolutePath().toFile();
+                file.getParentFile().mkdir();
+                writerString = new FileWriter(file);
                 delim = outFile.get(DELIM);
             }
 
@@ -317,7 +330,7 @@ public class SqliteCommand extends AbstractCommand {
 
         String[] nextRecord;
         if (updateMode.equalsIgnoreCase(OVERWRITE)) {
-            executeQuery(dbName, "Drop Table if exists " + tableName, false, null);
+            executeQuery(dbName, "Drop Table if exists " + tableName, false, null, false);
 
             //create table  based on file
             //Logic to create table based on # of columns with header as column names
@@ -329,7 +342,7 @@ public class SqliteCommand extends AbstractCommand {
                 }
 
             }
-            executeQuery(dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null);
+            executeQuery(dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
         }
 
 

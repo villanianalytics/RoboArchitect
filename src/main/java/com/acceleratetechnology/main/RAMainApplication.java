@@ -49,7 +49,7 @@ public class RAMainApplication {
     }
 
     public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(RAMainApplication::showAlert);
+       Thread.setDefaultUncaughtExceptionHandler(RAMainApplication::showAlert);
         if (args.length > 0) {
             try {
                 Constructor constructor = init(args[0]);

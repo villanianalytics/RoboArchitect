@@ -328,7 +328,7 @@ public class RAMainApplicationTest {
         @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
         properties.load(reader);
         PropertyConfigurator.configure(properties);
-        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\""));
+        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\" /header=true"));
 
         String actual = outputStream.toString().trim();
 
