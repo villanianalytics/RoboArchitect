@@ -334,8 +334,6 @@ public class RAMainApplicationTest {
 
         Assert.assertEquals(csvFile, actual);
 
-        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=closeDB /db=\"" + db + "\""));
-
         FileUtils.forceDelete(expectedFile);
 
         System.setOut(originOut);

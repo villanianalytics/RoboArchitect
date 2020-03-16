@@ -114,7 +114,7 @@ Create empty SQLite <samp>store.db</samp> database.
 Create empty SQLite <samp>store.db</samp> database.
 <pre>RoboArchitect -sqlite /op=createDB /db=store.db</pre>
 
-Create <samp>ABCD</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test.csv</samp> file data.
+Creating a table named <samp>ABCD</samp> in the <samp>store.db</samp> database and filling it with data from the <samp>test.csv</samp> file.
 <pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
 
 Add <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test2.csv</samp> file data.
@@ -134,10 +134,6 @@ To run SQL query on <samp>A</samp> table in SQLite <samp>store.db</samp> databas
 
  To run SQL query from a <samp>query.txt</samp> file on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result without headers to a console.
 <pre>RoboArchitect -sqlite /op=queryDB /db=store.db /query="query.txt"</pre>
-
- Close SQLite <samp>store.db</samp> database.
-<pre>RoboArchitect -sqlite /op=closeDB /db=store.db</pre>
-
 ## Maven settings
 1) To make executable files you need to add to in pom.xml file
 path to OpenJDK <i>.zip</i> file. <strong>Keep attention that OpenJDK needs to be for X64 Systems.</strong>

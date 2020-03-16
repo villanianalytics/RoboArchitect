@@ -22,7 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class SqliteCommand extends AbstractCommand {
     /**
-     * Run SQL command option. It could be {@link #CREATE_DB_OPTION}, {@link #CLOSE_DB_OPTION}, {@link #IMPORT_TABLE_OPTION},
+     * Run SQL command option. It could be {@link #CREATE_DB_OPTION}, {@link #IMPORT_TABLE_OPTION},
      * {@link #QUERY_DB_OPTION}.
      */
     private static final String OP_PARAMETER = "/op";
@@ -83,10 +83,6 @@ public class SqliteCommand extends AbstractCommand {
      */
     private static final String CREATE_DB_OPTION = "createDB";
     /**
-     * Close database option of -sqlite command. Need to close Database.
-     */
-    private static final String CLOSE_DB_OPTION = "closeDB";
-    /**
      * Import table data option. Need to add data to Database.
      */
     private static final String IMPORT_TABLE_OPTION = "importTable";
@@ -137,15 +133,12 @@ public class SqliteCommand extends AbstractCommand {
 
         Class.forName(JDBC.class.getCanonicalName());
         File db = Paths.get(opDB).toAbsolutePath().toFile();
-        db.getParentFile().mkdir();
+        logger.debug("File path is created: " + db.getParentFile().mkdir());
         opDB = db.getCanonicalPath();
 
         switch (opCmd) {
             case CREATE_DB_OPTION:
                 createDB(opDB);
-                break;
-            case CLOSE_DB_OPTION:
-                closeDB(opDB);
                 break;
             case IMPORT_TABLE_OPTION: {
                 String srcFile = getRequiredAttribute(SRC_FILE_PARAMETER);
@@ -205,18 +198,6 @@ public class SqliteCommand extends AbstractCommand {
     }
 
     /**
-     * Close specified Database.
-     *
-     * @param dbName Database name.
-     * @throws SQLException throws when database access error or other errors.
-     */
-    public void closeDB(String dbName) throws SQLException {
-        @Cleanup Connection c = DriverManager.getConnection(JDBC_SQLITE + dbName);
-
-        logger.info("Closed database successfully");
-    }
-
-    /**
      * Run SQL request on a Database and write response to a console or specified file if needed.
      *
      * @param dbName     Database file.
@@ -260,7 +241,7 @@ public class SqliteCommand extends AbstractCommand {
             } else {
                 printHeader = header;
                 File file = Paths.get(outFile.get(FILE)).toAbsolutePath().toFile();
-                file.getParentFile().mkdir();
+                logger.debug("File path was created: " + file.getParentFile().mkdir());
                 writerString = new FileWriter(file);
                 delim = outFile.get(DELIM);
             }
