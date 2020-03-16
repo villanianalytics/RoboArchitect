@@ -116,7 +116,7 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
         Path path = Paths.get(passwordDestinationFile);
         File passwordFile = path.toAbsolutePath().toFile();
 
-        passwordFile.getParentFile().mkdir();
+        passwordFile.getParentFile().mkdirs();
 
         FileUtils.write(passwordFile, encryptedPSWD, UTF_8);
         logger.debug("Done.");

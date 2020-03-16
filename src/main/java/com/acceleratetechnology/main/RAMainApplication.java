@@ -6,9 +6,9 @@ import com.acceleratetechnology.controller.exceptions.MissedParameterException;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
@@ -52,13 +52,29 @@ public class RAMainApplication {
        Thread.setDefaultUncaughtExceptionHandler(RAMainApplication::showAlert);
         if (args.length > 0) {
             try {
-                Constructor constructor = init(args[0]);
-                AbstractCommand command = (AbstractCommand) (constructor.newInstance(new Object[]{args}));
-                logger = Logger.getLogger(RAMainApplication.class);
-                command.execute();
+                ArrayList<String> commands = new ArrayList<>();
+                commands.add(args[0]);
+                for(int i = 1; i <= args.length; i++) {
+                 if(i < args.length && args[i].charAt(0) != '-') {
+                    commands.add(args[i]);
+                    continue;
+                 }
+                    String[] commandArgs = commands.toArray(new String[commands.size()]);
+                    Constructor constructor = init(commandArgs[0]);
+                     AbstractCommand command = (AbstractCommand) (constructor.newInstance(new Object[]{commandArgs}));
+                     logger = Logger.getLogger(RAMainApplication.class);
+                     command.execute();
 
+                     commands.clear();
+                     if(i < args.length) {
+                         commands.add(args[i]);
+                     }
+                }
             } catch (NullPointerException e) {
                 logger.error("Sorry but input command \"" + args[0] + "\" is not supported. Type -help to see commands.", e);
+                System.exit(1);
+            } catch (InvocationTargetException e){
+                logger.error(e.getTargetException().getMessage(), e);
                 System.exit(1);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

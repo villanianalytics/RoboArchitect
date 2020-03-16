@@ -3,6 +3,7 @@ package com.acceleratetechnology.controller;
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
 import com.opencsv.CSVWriter;
 import lombok.Cleanup;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -115,9 +116,9 @@ public class ConvertCommand extends AbstractCommand {
         logger.debug("Create and write to destination \"" + destXLSXFile + "\" file.");
         Path destination = Paths.get(destXLSXFile);
         File destinationFile = destination.toAbsolutePath().toFile();
-        destinationFile.getParentFile().mkdir();
+        destinationFile.getParentFile().mkdirs();
 
-        @Cleanup FileOutputStream fileOutputStream = new FileOutputStream(destination.toAbsolutePath().toFile());
+        @Cleanup FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
         workBook.write(fileOutputStream);
         logger.debug("Done.");
     }
@@ -138,7 +139,7 @@ public class ConvertCommand extends AbstractCommand {
         XSSFSheet my_worksheet = my_xls_workbook.getSheet(srcSheet);
         my_worksheet.iterator();
         File file = Paths.get(targetFile).toAbsolutePath().toFile();
-        file.getParentFile().mkdir();
+        file.getParentFile().mkdirs();
 
         @Cleanup FileWriter my_csv = new FileWriter(file);
         CSVWriter my_csv_output = new CSVWriter(my_csv, delim,

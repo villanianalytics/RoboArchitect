@@ -23,7 +23,17 @@ public class HelpCommand extends AbstractCommand {
     private static final String JSON_PATH = "-jsonpath          Get part of JSON by pattern\n\n\t" +
                                             "/srcFile=\"SOURCE_FILE\" [/destFile=\"Destination file\"] [/log=\"output.txt\"]\n";
     private static final String EMAIL = "-email                 Send an email to another email\n\n\t" +
-                                        "/config=\"CONFIG.PROPERTIES\" [/subject=\"SUBJECT\"] [/body=\"BODY\"]";
+                                        "/config=\"CONFIG.PROPERTIES\" [/subject=\"SUBJECT\"] [/body=\"BODY\"]\n";
+
+    private static final String QUERY_DELIM = "-querydelim                 Send an email to another email\n\n\t" +
+                                        "/srcFile=\"DELIMITED_FILE\" /query=\"SQL_QUERY\" [/delim=\"DELIMITER\"] [/destFile=\"FILE\"]\n" +
+                                        "\t[/suppressHeaders=\"false or true\"] [/skipLines=\"NUMBER\"] [/skipDataLines=\"NUMBER\"] [/log=\"LOG_FILE\"]\n";
+
+    private static final String SQLITE = "-sqlite                 Create SQLite database, create table and fill it by values from delimited file\n\n\t" +
+                                        "/op=\"createDB or importTable or queryDB\" /db=\"Database.db\"\n" +
+                                         "\t[/srcFile=\"CSV_FILE\"] [/table=\"TABLE_NAME\"] [/delim=\"DELIMITER\"] [/mode=\"OVERWRITE or APPEND\"]\n" +
+                                         "\t[/query=\"SQL_QUERY\"] [/return=\"Y or N\"] [/destFile=\"FILE\"] [/header=\"Y or N\"] [/log=\"LOG_FILE\"]\n" +
+                                         "\t";
     /**
      * System logger.
      */
@@ -43,5 +53,7 @@ public class HelpCommand extends AbstractCommand {
         logger.info(CONNECT);
         logger.info(JSON_PATH);
         logger.info(EMAIL);
+        logger.info(QUERY_DELIM);
+        logger.info(SQLITE);
     }
 }

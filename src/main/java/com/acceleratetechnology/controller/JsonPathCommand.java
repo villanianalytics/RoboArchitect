@@ -75,7 +75,7 @@ public class JsonPathCommand extends AbstractCommand {
             File destination = file.getParentFile();
             if (destination.exists()) {
                 logger.debug("Destination of a file " + destination + " does not exist so began to create it.");
-                boolean mkdir = destination.mkdir();
+                boolean mkdir = destination.mkdirs();
                 logger.debug("Destination file directory was created: " + mkdir);
             }
 

@@ -133,7 +133,7 @@ public class SqliteCommand extends AbstractCommand {
 
         Class.forName(JDBC.class.getCanonicalName());
         File db = Paths.get(opDB).toAbsolutePath().toFile();
-        logger.debug("File path is created: " + db.getParentFile().mkdir());
+        logger.debug("File path is created: " + db.getParentFile().mkdirs());
         opDB = db.getCanonicalPath();
 
         switch (opCmd) {
@@ -241,7 +241,7 @@ public class SqliteCommand extends AbstractCommand {
             } else {
                 printHeader = header;
                 File file = Paths.get(outFile.get(FILE)).toAbsolutePath().toFile();
-                logger.debug("File path was created: " + file.getParentFile().mkdir());
+                logger.debug("File path was created: " + file.getParentFile().mkdirs());
                 writerString = new FileWriter(file);
                 delim = outFile.get(DELIM);
             }

@@ -35,7 +35,7 @@ public class UnzipCommand extends AbstractCommand {
     @Override
     public void execute() throws ZipException, MissedParameterException {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
-        String dest = getAttribute(DEST_DIR_PARAM);
+        String dest = getDefaultAttribute(DEST_DIR_PARAM,"");
 
         unzip(srcFile, dest);
         logger.error("Unzipped.");

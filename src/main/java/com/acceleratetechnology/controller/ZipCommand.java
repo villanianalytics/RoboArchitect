@@ -62,7 +62,7 @@ public class ZipCommand extends AbstractCommand {
         logger.debug("Check if destination directory \"" + destDir + "\" exists.");
         if (parentFile != null && !parentFile.exists()) {
             logger.debug("Start to create destination directory.");
-            if (parentFile.mkdir()) {
+            if (parentFile.mkdirs()) {
                 logger.debug("Created.");
             }
         }
