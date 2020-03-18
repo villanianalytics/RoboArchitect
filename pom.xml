@@ -7,7 +7,7 @@
     <groupId>com.acceleratetechnology</groupId>
     <artifactId>RoboArchitect</artifactId>
     <version>1.2</version>
-
+	
     <profiles>
         <profile>
             <id>linux</id>
@@ -494,5 +494,10 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.30.1</version>
         </dependency>
+		<dependency>
+		    <groupId>com.github.villanianalytics.unsql</groupId>
+		    <artifactId>unsql</artifactId>
+		    <version>0.0.3</version>
+		</dependency>
     </dependencies>
 </project>
