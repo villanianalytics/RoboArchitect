@@ -262,6 +262,19 @@ public class RAMainApplicationTest {
     }
 
     @Test
+    public void testUnSQL() throws IOException {
+
+        testUnSQL("select field1 from *", "{\"field1\":\"aa11\"}");
+
+        testUnSQL("select field2 from *", "{\"field2\":[\"aa22\"]}");
+
+        testUnSQL("select sf1 from structField", "{\"structfield\":{\"sf1\":[\"aaa11\",\"test\"]}}");
+        testUnSQL("select sf2 from structfield", "{\"structfield\":{\"sf2\":{\"aaa22\":{\"test\":[\"1\",\"2\",\"3\",\"4\"]}}}}");
+       
+        System.setOut(originOut);
+    }
+    
+    @Test
     public void testJSONParser() throws IOException {
 
         testJSONParse("$.field1", "\"aa11\"");
@@ -294,6 +307,7 @@ public class RAMainApplicationTest {
 
         testInvalidCommand("-convert", "Attribute /srcFile was missed.");
         testInvalidCommand("-jsonpath", "Attribute /srcFile was missed.");
+        testInvalidCommand("-unsql", "Attribute /srcFile was missed.");
         testInvalidCommand("-zip", "Attribute /src was missed.");
         testInvalidCommand("-querydelim /srcFile=\"src/test/resources/test.csv\"", "Attribute /query was missed.");
 
@@ -368,9 +382,40 @@ public class RAMainApplicationTest {
         FileUtils.deleteQuietly(destFile);
         outputStream.reset();
     }
+    
+    
+    private void testUnSQL(String query, String expected) throws IOException {
+        System.setOut(out);
+        Properties properties = new Properties();
+        @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
+        properties.load(reader);
+        PropertyConfigurator.configure(properties);
+
+        File srcFile = Paths.get("test.json").toFile();
+        FileUtils.write(srcFile, jsonResponse, UTF_8);
+
+        RAMainApplication.main(new String[]{"-unsql", "/srcFile=test.json", "/query=" + query});
+
+        String actual = outputStream.toString().trim();
+
+        Assert.assertEquals((expected + "\nUnSQL query done."), actual);
+        outputStream.reset();
+        System.setOut(out);
+
+        File destFile = Paths.get("out.txt").toFile();
+        RAMainApplication.main(new String[]{"-unsql", "/srcFile=test.json", "/destFile=" + destFile, "/query=" + query});
+
+        String json = FileUtils.readFileToString(destFile, UTF_8);
+        assertEquals(expected, json);
+
+        FileUtils.deleteQuietly(srcFile);
+        FileUtils.deleteQuietly(destFile);
+        outputStream.reset();
+    }
 
 
     private void testInvalidCommand(String command, String expected) throws IOException {
+    	outputStream.reset();
         System.setOut(out);
         Properties properties = new Properties();
         @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());

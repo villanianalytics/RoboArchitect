@@ -45,18 +45,15 @@ public class UnSqlCommand extends AbstractCommand {
         	throw new MissedParameterException("Attribute " + SRC_FILE_PARAM + " is not in a valid format.");
         }
         
-        if (!(destFile.endsWith(".xml") || destFile.endsWith(".json"))) {
-        	throw new MissedParameterException("Attribute " + DEST_FILE_PARAM + " is not in a valid format.");
-        }
-
         unSqlFilter(srcFile, query, destFile);
     }
 
     
     private void unSqlFilter(String srcFile, String query, String destFile) throws IOException, MissedParameterException {
         String raw = FileUtils.readFileToString(Paths.get(srcFile).toFile(), UTF_8);
-        String formattedJson = "";
-        if (raw != null && !raw.isEmpty()) {
+        String formattedJson = getFilteredJson(raw, query, destFile);
+      
+        if (destFile != null && !destFile.isEmpty()) {
             Path destPath = Paths.get(destFile);
             File file = destPath.toAbsolutePath().toFile();
             File destination = file.getParentFile();
@@ -65,16 +62,6 @@ public class UnSqlCommand extends AbstractCommand {
                 boolean mkdir = destination.mkdirs();
                 logger.debug("Destination file directory was created: " + mkdir);
             }
-            
-            
-            UnSql unsql = new UnSql(raw);
-           
-            try {
-				formattedJson = unsql.executeQuery(query, getExportFormat(destFile));
-			} catch (UnSqlException e) {
-				throw new MissedParameterException(e.getMessage());
-			}
-            
             FileUtils.write(file, formattedJson, UTF_8);
         }
         
@@ -82,6 +69,22 @@ public class UnSqlCommand extends AbstractCommand {
     }
     
     private UnSql.EXPORT_FORMAT getExportFormat(String destFile) {
-    	return destFile.endsWith(".xml") ? EXPORT_FORMAT.XML : EXPORT_FORMAT.JSON;
+    	return destFile != null && destFile.endsWith(".xml") ? EXPORT_FORMAT.XML : EXPORT_FORMAT.JSON;
+    }
+    
+    private String getFilteredJson(String raw, String query, String destFile) throws MissedParameterException {
+    	String formattedJson = "";
+        
+        UnSql unsql = new UnSql(raw);
+        
+        try {
+			formattedJson = unsql.executeQuery(query, getExportFormat(destFile));
+		} catch (UnSqlException e) {
+			throw new MissedParameterException(e.getMessage());
+		}
+        
+        logger.info(formattedJson);
+        
+        return formattedJson;
     }
 }
