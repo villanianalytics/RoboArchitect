@@ -1,9 +1,13 @@
 package com.acceleratetechnology.controller;
 
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
+import com.github.villanianalytics.unsql.UnSql;
+import com.github.villanianalytics.unsql.UnSql.EXPORT_FORMAT;
+import com.github.villanianalytics.unsql.exception.UnSqlException;
 import com.google.gson.*;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -117,6 +121,10 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     public static final String JSON_PATH_PARAM = "/jsonPath";
     /**
+     * Unsql filter attribute.
+     */
+    public static final String UNSQL_PATH_PARAM = "/query";
+    /**
      * Destination xlsx file command line parameter.
      */
     public static final String DEST_FILE_PARAM = "/destFile";
@@ -175,10 +183,17 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         String jsonPath = getAttribute(JSON_PATH_PARAM);
         if (jsonPath != null && !jsonPath.isEmpty()) {
             response = jsonFilter(jsonPath, response);
-        } else {
-            logger.info(response);
         }
-
+        
+        String unSqlQuery = getAttribute(UNSQL_PATH_PARAM);
+        if (unSqlQuery != null && !unSqlQuery.isEmpty()) {
+            response = unSqlFilter(unSqlQuery, response);
+        }
+        
+        if (StringUtils.isEmpty(jsonPath) && StringUtils.isEmpty(unSqlQuery)) {
+        	logger.info(response);
+        }
+        
         String jsonFile = getAttribute(DEST_FILE_PARAM);
         if (jsonFile != null && !jsonFile.isEmpty()) {
             Path jsonDir = Paths.get(jsonFile);
@@ -454,6 +469,28 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         String formattedMessage = prettyJsonFormatter(getJsonPath(json, jsonPath));
         logger.info(formattedMessage);
         return formattedMessage;
+    }
+    
+    /**
+     * Return filtered json by sql query
+     *
+     * @param jsonPath JSON path.
+     * @param json     JSON text.
+     * @return Filtered Json.
+     * @throws MissedParameterException 
+     */
+    public String unSqlFilter(String query, String json) throws MissedParameterException {
+        String filteredJson = "";
+        UnSql unsql = new UnSql(json);
+        
+        try {
+        	filteredJson = unsql.executeQuery(query, EXPORT_FORMAT.JSON);
+		} catch (UnSqlException e) {
+			throw new MissedParameterException(e.getMessage());
+		}
+        
+        logger.info(filteredJson);
+        return filteredJson;
     }
 
     private enum HttpMethod {
