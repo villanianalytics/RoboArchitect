@@ -89,6 +89,12 @@ public abstract class AbstractCommand {
         String logLevel = getAttribute("/logLevel");
         if (logLevel != null) {
             properties.put("log4j.appender.stdout.Threshold", logLevel);
+            properties.put("log4j.appender.file.Threshold", logLevel);
+        }
+        else
+        {
+            properties.put("log4j.appender.stdout.Threshold", "INFO");
+            properties.put("log4j.appender.file.Threshold", "INFO");
         }
         PropertyConfigurator.configure(properties);
     }
