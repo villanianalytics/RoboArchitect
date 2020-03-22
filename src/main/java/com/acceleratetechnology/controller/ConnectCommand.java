@@ -187,7 +187,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         
         String unSqlQuery = getAttribute(UNSQL_PATH_PARAM);
         if (unSqlQuery != null && !unSqlQuery.isEmpty()) {
-            response = unSqlFilter(unSqlQuery, response);
+            response = unSqlFilter(unSqlQuery, response, DEST_FILE_PARAM);
         }
         
         if (StringUtils.isEmpty(jsonPath) && StringUtils.isEmpty(unSqlQuery)) {
@@ -479,18 +479,39 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @return Filtered Json.
      * @throws MissedParameterException 
      */
-    public String unSqlFilter(String query, String json) throws MissedParameterException {
+    public String unSqlFilter(String query, String json, String destFile) throws MissedParameterException {
         String filteredJson = "";
         UnSql unsql = new UnSql(json);
         
         try {
-        	filteredJson = unsql.executeQuery(query, EXPORT_FORMAT.JSON);
+        	filteredJson = unsql.executeQuery(query, getExportFormat(destFile));
 		} catch (UnSqlException e) {
 			throw new MissedParameterException(e.getMessage());
 		}
         
         logger.info(filteredJson);
         return filteredJson;
+    }
+    
+    /**
+     *  Return unsql export format
+     * @param destFile
+     * @return
+     */
+    private UnSql.EXPORT_FORMAT getExportFormat(String destFile) {
+    	if (destFile != null && destFile.endsWith(".xml")) {
+    		return EXPORT_FORMAT.XML;
+    	}
+    	
+    	if (destFile != null && destFile.endsWith(".json")) {
+    		return EXPORT_FORMAT.JSON;
+    	}
+    	
+    	if (destFile != null && destFile.endsWith(".txt")) {
+    		return EXPORT_FORMAT.VALUES;
+    	}
+    	
+    	return EXPORT_FORMAT.VALUES;
     }
 
     private enum HttpMethod {
