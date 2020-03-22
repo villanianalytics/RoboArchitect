@@ -264,12 +264,12 @@ public class RAMainApplicationTest {
     @Test
     public void testUnSQL() throws IOException {
 
-        testUnSQL("select field1 from *", "{\"field1\":\"aa11\"}");
+        testUnSQL("select field1 from *", "aa11");
 
-        testUnSQL("select field2 from *", "{\"field2\":[\"aa22\"]}");
+        testUnSQL("select field2 from *", "aa22");
 
-        testUnSQL("select sf1 from structField", "{\"structfield\":{\"sf1\":[\"aaa11\",\"test\"]}}");
-        testUnSQL("select sf2 from structfield", "{\"structfield\":{\"sf2\":{\"aaa22\":{\"test\":[\"1\",\"2\",\"3\",\"4\"]}}}}");
+        testUnSQL("select sf1 from structField", "aaa11\ntest");
+        testUnSQL("select sf2 from structfield", "1\n2\n3\n4");
        
         System.setOut(originOut);
     }

@@ -35,7 +35,6 @@ public class UnSqlCommand extends AbstractCommand {
     	unsql();
     }
 
-
     private void unsql() throws MissedParameterException, IOException {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
         String query = getRequiredAttribute(QUERY_PATH_PARAM);
@@ -69,7 +68,19 @@ public class UnSqlCommand extends AbstractCommand {
     }
     
     private UnSql.EXPORT_FORMAT getExportFormat(String destFile) {
-    	return destFile != null && destFile.endsWith(".xml") ? EXPORT_FORMAT.XML : EXPORT_FORMAT.JSON;
+    	if (destFile != null && destFile.endsWith(".xml")) {
+    		return EXPORT_FORMAT.XML;
+    	}
+    	
+    	if (destFile != null && destFile.endsWith(".json")) {
+    		return EXPORT_FORMAT.JSON;
+    	}
+    	
+    	if (destFile != null && destFile.endsWith(".txt")) {
+    		return EXPORT_FORMAT.VALUES;
+    	}
+    	
+    	return EXPORT_FORMAT.VALUES;
     }
     
     private String getFilteredJson(String raw, String query, String destFile) throws MissedParameterException {
