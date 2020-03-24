@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <style>
+        body {
+            font-family: "Palatino Linotype", Palatino, Georgia, "Century Schoolbook", serif;
+        }
+
+        h2 {
+            font-size: 200%;
+            background-color: white;
+        }
+
+        h3 {
+            font-size: 130%;
+            color: white;
+            background-color: #525d76;
+        }
+
+        h4 {
+            color: white;
+            background-color: #828da6;
+        }
+
+        h5 {
+            font-size: 100%;
+            color: white;
+            background-color: #a6adbe;
+            margin-top: .5rem;
+            margin-bottom: .5rem;
+        }
+
+        h6 {
+            font-size: 100%;
+            color: white;
+            background-color: #c1c5d1;
+            margin-top: .5rem;
+            margin-bottom: .5rem;
+        }
+
+        h5 + p, h6 + p {
+            margin-top: .5rem;
+            margin-bottom: .5rem;
+        }
+
+        h3 > a, h4 > a, h5 > a, h6 > a {
+            color: white;
+        }
+
+        h3 > a:visited, h4 > a:visited, h5 > a:visited, h6 > a:visited,
+        h3 > a:hover, h4 > a:hover, h5 > a:hover, h6 > a:hover {
+            color: lightskyblue;
+        }
+
+        var {
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 0.8rem;
+        }
+
+        q {
+            font-family: "Lucida Console", Monaco, monospace;
+            font-size: 0.8rem;
+        }
+
+        q.no-break {
+            white-space: nowrap;
+            hyphens: none;
+        }
+
+        code, samp, kbd {
+            white-space: nowrap;
+            hyphens: none;
+            font-size: 1.125rem;
+            font-style: italic;
+            background-color: #efefef;
+        }
+
+        h2 > code, h2 > samp {
+            font-size: 2rem;
+        }
+
+        h3 > code, h3 > samp {
+            font-size: 1.5rem;
+        }
+
+        h3 > var {
+            font-size: 1.125rem;
+        }
+
+        pre {
+            background-color: #efefef;
+            position: center;
+            margin-right: 4rem;
+            margin-left: 4rem;
+            font-size: 1.125rem;
+        }
+
+        pre var, code var {
+            font-size: 0.65rem;
+        }
+
+        /* code snippets in examples and tutorials */
+        .code {
+            background: #efefef;
+        }
+
+        /* highlight console input */
+        .input, kbd {
+            color: white;
+            background: darkseagreen;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* highlight console output */
+        .output {
+            color: white;
+            background: #837a67;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* a workaround for invisible
+           (white on white) overflows */
+        pre.input:hover, pre.output:hover {
+            margin-right: 0;
+            margin-left: 0;
+            overflow: scroll;
+            text-overflow: initial;
+        }
+
+        td {
+            vertical-align: top;
+            background-color: #eeeeee;
+            color: black;
+        }
+
+        tr:hover > td {
+            background-color: whitesmoke;
+        }
+
+        th {
+            background-color: silver;
+            color: black;
+            vertical-align: middle;
+        }
+
+        td pre {
+            margin: 0 0 0 0;
+            font-size: 1rem;
+        }
+
+        thead.no-bold th {
+            font-weight: normal;
+            white-space: nowrap;
+        }
+
+        table.attr {
+            width: 100%;
+        }
+
+        table.attr td:first-child {
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        table.attr td:last-child {
+            text-align: center;
+        }
+
+        table.attr td.center, h1.center, p.center {
+            text-align: center;
+        }
+
+        table.attr td.left {
+            font-family: "Palatino Linotype", Palatino, Georgia, "Century Schoolbook", serif;
+            font-size: 1rem;
+            font-style: normal;
+            text-align: left;
+        }
+
+        table.attr td.var {
+            text-align: left;
+        }
+
+        td[rowspan] {
+            vertical-align: middle;
+        }
+
+        ul.inlinelist {
+            list-style-type: none;
+            margin-left: 0;
+            padding: 0;
+        }
+
+        li.indent {
+            padding-left: 1rem;
+        }
+
+        div.float {
+            margin-top: 0.5rem;
+            width: 100%;
+            min-height: 1.5rem;
+            line-height: 1.5rem;
+            background-color: silver;
+        }
+
+        div.float + table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        div.float + table th:first-child {
+            width: 20%;
+            white-space: nowrap;
+        }
+
+        div.float + table tr:first-child {
+            width: 20%;
+            white-space: nowrap;
+        }
+
+        span.left {
+            float: left;
+            font-family: Verdana, Geneva, sans-serif;
+            font-weight: bold;
+        }
+
+        span.right {
+            float: right;
+        }
+
+        span.left, span.right {
+            vertical-align: middle;
+            background-color: silver;
+        }
+
+        ol.refs {
+            counter-reset: refs;
+        }
+
+        ol.refs > li {
+            list-style: none;
+            position: relative;
+        }
+
+        ol.refs > li:before {
+            content: "[" counter(refs, decimal) "]";
+            counter-increment: refs;
+            position: absolute;
+            left: -2rem;
+        }
+
+        button {
+            color: white;
+        }
+
+        button.copy {
+            background-image: url("https://cdn4.iconfinder.com/data/icons/feather/24/copy-512.png");
+            background-repeat: no-repeat;
+            background-size: 15px;
+            background-color: white;
+            cursor: pointer;
+            outline: none;
+            width: 17px;
+            height: 17px;
+            position: absolute;
+            margin-left: 2.5rem;
+            font-size: 24px;
+            text-align: center;
+            border: none;
+        }
+
+        button.copy:hover {
+            content: attr(title);
+        }
+
+        button.copy:active {
+            content: attr(title);
+            background-repeat: no-repeat;
+            background-size: 17px;
+        }
+
+        /* Tooltip */
+        button.copy + .tooltip > .tooltip-inner {
+            background-color: #a3a3a3;
+            position: absolute;
+            margin-top: 1rem;
+            margin-left: 1.5rem;
+            border: 1px solid #626262;
+            font-size: 12px;
+        }
+
+        div.pre {
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        var optionElement;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            optionElement = document.getElementById("options");
+            $("button.copy").click(function () {
+                var copyText = this.parentElement.getElementsByTagName("pre")[0].innerText;
+
+                copyTextToClipboard(copyText);
+                $(this).tooltip({title: "Copied!"});
+                $(this).tooltip("show");
+            });
+            $("button.copy").mouseout(function () {
+                $(this).tooltip("destroy");
+            });
+        }, false);
+
+        function select(sel) {
+            var mode = optionElement.options;
+            requestValue = mode[sel].value;
+            if (sel !== 0) {
+                for (i = 1; i < mode.length; i++) {
+                    if (i !== sel) {
+                        document.getElementById(mode[i].value).style.display = "none";
+                    } else {
+                        document.getElementById(mode[i].value).style.display = "block";
+                    }
+                }
+            } else {
+                for (i = 1; i < mode.length; i++) {
+                    document.getElementById(mode[i].value).style.display = "block";
+                }
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";  //avoid scrolling to bottom
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'successful' : 'unsuccessful';
+                console.log('Fallback: Copying text command was ' + msg);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function copyTextToClipboard(text) {
+            if (!navigator.clipboard) {
+                fallbackCopyTextToClipboard(text);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(function () {
+                console.log('Async: Copying to clipboard was successful!');
+            }, function (err) {
+                console.error('Async: Could not copy text: ', err);
+            });
+        }
+    </script>
+
+    <title>RoboArchitect</title>
+</head>
+
+<body>
+
+<h2>RoboArchitect</h2>
+
+<h3>Description</h3>
+<p>RoboArchitect is a command-line application that can help you with zipping and unzipping files, convert from
+    .csv file to .xlsx file and vice versa, send an email,
+    encrypt a password and write it to a file, send a request to specified url with a username and a password and get a
+    response, parse data from JSON, and run SQL against a .csv/.txt file or create SQLite database and run SQL request
+    there.</p>
+<p><strong>Zip and Unzip:</strong> Archives files and directories in a .zip or decompresses .zip files into the
+    specified directory.</p>
+
+<p><strong>Conversion:</strong> Converts a .csv file to a .xlsx file, and can also perform the inverse conversion.</p>
+
+<p><strong>Connect and Parse:</strong> Sends a request for a web service and receives a response from it.
+</p>
+<p>
+    <strong>Encrypt:</strong> Encrypts your password and you can use it in commands where a password is required.
+</p>
+<p><strong>Email:</strong> Sends emails to any users and supports all standard functions.
+</p>
+
+<p><strong>Query Delim:</strong> Executes SQL queries using delimited files as the basis. The file name is the table
+    name, and the first line is the table headers, everything else is the table data.
+</p>
+
+<p><strong>SQL:</strong> Creates an SQLite database, creates a table with data from a delimited file there or adds
+    data to an existing table. It can also execute SQL queries to the database and write the result to a file or display
+    it on the console.
+</p>
+
+
+<h3>Parameters</h3>
+<table class="attr">
+    <tbody>
+    <tr>
+        <th scope="col">Command</th>
+        <th scope="col">Attribute</th>
+        <th scope="col">Description</th>
+        <th scope="col">Required</th>
+        <th scope="col">Default</th>
+        <th scope="col">Valid values</th>
+    </tr>
+    <tr>
+        <td><a href="#Zip">-zip</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/src</td>
+        <td>Directory or file that will be archived to a .zip file.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>C:\Program Files, example.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>.zip file in which all selected files and directories will be placed. If the file exists, it will be
+            overwritten.
+        </td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>dir\example.zip</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Unzip">-unzip</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>.zip file with files or directories.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.zip, zip/example.zip</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destDir</td>
+        <td>The directory where the zip file will be unpacked. If the same files exist in this directory, they will be
+            overwritten.
+        </td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>unzipped, example/directory</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Convert">-convert</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>A .csv or .xlsx file to be converted to a .xlsx or .csv file, respectively.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.csv, file.txt, file.xlsx, dir/example.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>File in which the source file would be formatted. If the file exists, it will be overwritten.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.xlsx, file.csv, file.txt, converted/file.csv</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/delim</td>
+        <td>File separator. Possible delimiters are "," or ";" .</td>
+        <td class="center">N</td>
+        <td class="center">,</td>
+        <td>, ; |</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/sheetname</td>
+        <td>The name of the .xlsx sheet needed to sign the .xlsx file or to convert the specified sheet to a .csv
+            file.
+        </td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>ABCD, SheetName1, Unnamed</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Password">-password</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/passwordFile</td>
+        <td>File in which your encrypted password would be stored. If the file exists, it will be overwritten.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>password.txt, encrypted/file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Connect">-connect</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>File in which the response from the web service will be saved. If the file exists, it will be overwritten.
+            If this parameter is not specified, the result will be displayed on the console.
+        </td>
+        <td class="center">N</td>
+        <td class="center">Console output</td>
+        <td>file.txt, response.json</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/config</td>
+        <td>Configuration file in which field such as <var>url</var> should be passed. <a href="#config">more detail</a>
+        </td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>config.properties, config.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/jsonPath</td>
+        <td>Path to a specific part of the expected JSON response from the web server. If this parameter is not
+            specified, the full response will be displayed.
+        </td>
+        <td class="center">N</td>
+        <td class="center"></td>
+        <td>$.id</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/passwordFile</td>
+        <td>File in which your encrypted password is stored. If this parameter is not specified it would use a password
+            from a config file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">password in a config file.</td>
+        <td>password.txt, directory/file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/reqType</td>
+        <td>Change the http method. If this parameter is not specified, then the GET method will be used by default.
+        </td>
+        <td class="center">N</td>
+        <td class="center">GET</td>
+        <td>GET, HEAD, POST, PUT, PATCH, DELETE</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>File which would be attached to your POST or PUT method.</td>
+        <td class="center">N</td>
+        <td class="center"></td>
+        <td>table.db, text.txt, image.png</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/body</td>
+        <td>Text which would be send in the POST method.</td>
+        <td class="center">N</td>
+        <td class="center"></td>
+        <td>Any text with \n new lines and \t tabs</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/mediaType</td>
+        <td>Type of the files which would be sent to a web service.</td>
+        <td class="center">N</td>
+        <td class="center">application/json</td>
+        <td>application/json, text/html, multipart/form-data and etc</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Jsonpath">-jsonpath</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>File in which a JSON is located. It would be used to get a specific part of the JSON</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.json, file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/jsonPath</td>
+        <td>Path to a specific part of the expected JSON taken from the source file.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>$.id</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>File in which the filtered response will be saved. If the file exists, it will be overwritten. If this
+            parameter is not specified, the result will be displayed on the console.</td>
+        <td class="center">N</td>
+        <td class="center">Console output</td>
+        <td>file.txt, response.json</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td><a href="#Email">-email</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/subject</td>
+        <td>Subject of an email.</td>
+        <td class="center">N</td>
+        <td class="center"></td>
+        <td>Subject of a letter</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/body</td>
+        <td>Body of an email. It could have new lines and tab characters. New line should be \n and tab should be \t.
+        </td>
+        <td class="center">N</td>
+        <td class="center"></td>
+        <td>Text of an email with new lines \n and tabs \t.</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/config</td>
+        <td>Config file with email details <a href="#emailConfig">more detail</a>.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>config.properties, config.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/passwordFile</td>
+        <td>File in which your encrypted password is stored. If this parameter is not specified it would use a password
+            from a config file.
+        </td>
+        <td class="center">N</td>
+        <td style="white-space: nowrap;" class="center">password in a config file.</td>
+        <td>password.txt, directory/file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    <tr>
+        <td style="white-space: nowrap;"><a href="#Query">-querydelim</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>A .csv or .txt file which would be used as a database for SQL request. Name of the file is a table name, the
+            first line is the table headers, everything else is the table data.
+        </td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.txt, file.csv</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/query</td>
+        <td>SQL request which will be used for getting specific data from a source file.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>SELECT * from table</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/delim</td>
+        <td>Delimiter of the source file.</td>
+        <td class="center">N</td>
+        <td class="center">,</td>
+        <td>, ; |</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>File in which the result of the SQL query will be written. If the file exists, it will be overwritten.</td>
+        <td class="center">N</td>
+        <td class="center">Console output</td>
+        <td>text.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/suppressHeaders</td>
+        <td>Indicates if the first line of the file starts with data instead of the column headers.</td>
+        <td class="center">N</td>
+        <td class="center">false</td>
+        <td>false, true</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/skipLines</td>
+        <td>Number of lines in the file which would be ignored.</td>
+        <td class="center">N</td>
+        <td class="center">0</td>
+        <td>0, 1, 2, 3, 4 and etc.</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/skipDataLines</td>
+        <td>Number of data lines which would be skipped after the column header.</td>
+        <td class="center">N</td>
+        <td class="center">0</td>
+        <td>0, 1, 2, 3, 4 and etc.</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.
+        </td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+
+    <tr>
+        <td style="white-space: nowrap;"><a href="#SQL">-sql</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/connection</td>
+        <td>The JDBC connection string to use. For SQLite, enter "SQLITE" </td>
+        <td class="center">N</td>
+        <td class="center">SQLITE</td>
+        <td>SQLITE</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/op</td>
+        <td>The choice of what the program will do, namely create a database, add tables to it, run an SQL query.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>createDB, importTable, queryDB</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/db</td>
+        <td>The expected name and place where the SQL database will be created. The name should ends on .db.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>shop.db, directory/shop.db</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/srcFile</td>
+        <td>A delimited file is needed to create or add data from it to the SQLite database. Used in <var>importTable</var> option.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>file.csv, file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/table</td>
+        <td>The name of the table in the SQLite database. This name can be anything. Used in <var>importTable</var> option.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>table, ABCD</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/delim</td>
+        <td>Delimiter of the source file. Used in <var>importTable</var> and <var>queryDB</var> option.</td>
+        <td class="center">N</td>
+        <td class="center">,</td>
+        <td>, ; |</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/mode</td>
+        <td>The way to work with the table. You can either overwrite or create a table or add data to the end of the table. Used in <var>importTable</var> option.</td>
+        <td class="center">N</td>
+        <td class="center">APPEND</td>
+        <td>APPEND, OVERWRITE</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/query</td>
+        <td>SQL request which will be used for getting specific data from a SQLite database. Used in <var>queryDB</var> option.</td>
+        <td class="center">Y</td>
+        <td class="center"></td>
+        <td>query.txt, SELECT * from table</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/return</td>
+        <td>Shows whether or not the program displays the result. Used in <var>queryDB</var> option.</td>
+        <td class="center">N</td>
+        <td class="center">FALSE(except queryDB option it is TRUE)</td>
+        <td>false, true, t, y, yes, n, no, 1, 0</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/destFile</td>
+        <td>File in which the result of the SQL query will be written. If the file exists, it will be overwritten. Used in <var>queryDB</var> option.</td>
+        <td class="center">N</td>
+        <td class="center">Console output</td>
+        <td>file.txt, directory/file.txt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/header</td>
+        <td>Shows whether or not the program displays the table header. Used in <var>queryDB</var> option.</td>
+        <td class="center">N</td>
+        <td class="center">FALSE</td>
+        <td>false, true, t, y, yes, n, no, 1, 0</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>/log</td>
+        <td>File to which the program logs will be written. If this parameter is not specified, then all the logs will
+            be written to the logs.log file.</td>
+        <td class="center">N</td>
+        <td class="center">logs.log</td>
+        <td>text.txt, log.txt</td>
+    </tr>
+    </tbody>
+</table>
+
+<h3 id="Zip">Zip</h3>
+
+<p>Archives file or directory and save it in a specified directory.</p>
+
+<p>To make a .zip file you need to specify <var>/srcDir</var> and <var>/destFile</var> attributes.</p>
+<p>For <var>/srcDir</var>, you could pass either directory or file.</p>
+<p>For <var>/destFile</var>, you should pass an expected .zip file. If the directory of this file doesn't exist it would
+    create it.</p>
+
+<h3 id="Unzip">Unzip</h3>
+<p>Unzip .zip file to a specified directory.</p>
+
+<p>To unzip an archive you should specify <var>/srcFile</var> and <var>/destFile</var> attributes.</p>
+<p>For <var>/srcFile</var>, you should pass either local or global .zip file path.</p>
+<p>For <var>/destFile</var>, you should pass a directory where all your unzipped files will be saved.</p>
+
+<h3 id="Convert">Convert</h3>
+<p>Converts .csv file to .xlsx file.</p>
+
+<p>To convert .csv files to .xlsx you should specify <var>/srcFile</var>, <var>/destFile</var>, <var>/delim</var> and
+    <var>/sheetname</var> attributes.
+</p>
+<p>For <var>/srcFile</var>, you should pass either local or global .csv file path.</p>
+<p>For <var>/destFile</var>, you should pass a directory with a file where you want to save your .xlsx file.</p>
+<p>For <var>/delim</var>, you should pass a delimiter of .csv file, usually, it is "," or ";".</p>
+<p>For <var>/sheetname</var>, you should pass a .xlsx sheet name.</p>
+
+<h3 id="Password">Password</h3>
+<p>Encrypts user password.</p>
+
+<p>For <var>/passwordFile</var>, you should pass a file where your encrypted file will be saved.</p>
+
+<h3 id="Connect">Connect</h3>
+<p>Connect to specified url with required username and password, then get a response and save it to a file.</p>
+
+<p>For <var>/destFile</var>, you could pass a file where a response would be saved.</p>
+<p>For <var>/config</var>, you should pass a config file.</p>
+<p>For <var>/jsonPath</var>, you could pass a JSON filter pattern.</p>
+
+<p>The config file should have <var>user</var> and <var>url</var> fields.
+    If you wrote the <var>password</var> field there you may not use <var>/passwordFile</var> method.</p>
+<p>Here is one of the possible realizations:</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre id="config">#Authentication Properties
+
+url=url
+
+user=username
+
+password=password
+
+httpmethod=GET
+</pre>
+</div>
+<h3 id="Jsonpath">Json Path</h3>
+<p>Json path is needed to filter a JSON file and take from there just a needed part. It takes the needful part of a JSON
+    by a
+    pattern.</p>
+<p>For <var>/srcFile</var>, you should pass a file with JSON inside.</p>
+<p>For <var>/jsonPath</var>, you should pass a JSON filter pattern.</p>
+<p>For <var>/destFile</var>, you could pass a file where the filtered result will be saved.</p>
+<h3 id="Email">Email</h3>
+<p>You could send an email with or without an attached file to another person.</p>
+<p>For <var>/config</var>, you should pass a config file.</p>
+<p>If you want to use an encrypted password from a file
+    you could path it to <var>/passwordFile</var> else you should pass it to a config file.</p>
+<p>Here is one of the possible realizations of the email config file:</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre id="emailConfig">#Email Properties
+
+fromaddress=email@gmail.com
+
+# If you do not have an encrypted password file.
+password=password
+
+toaddress=emailTo@gmail.com
+
+# Optional.
+ccaddress=copyEmail@xrpmail.com
+
+# Optional.
+bccaddress=sicretCopyEmail@enayu.com
+
+subject=Here must be a subject of a letter.
+
+# If you want to send a message as HTML text you should pass Y else N.
+htmlbody=Y
+
+body=&lt;h1&gt; Here could be a text. &lt;/h1&gt;
+
+# Optional.
+attachment=file.txt
+
+ctype=TLS
+
+smtpserver=smtp.gmail.com
+
+port=587
+# SSL -> port 465; TLS -> port 587.
+</pre>
+</div>
+<h3 id="Query">Query Delim</h3>
+<p>Allows a user to run SQL against a .csv/.txt file.</p>
+<p>For <var>/srcFile</var>, .txt or .csv file with data.</p>
+<p>For <var>/delim</var>, file delimiter.</p>
+<p>For <var>/query</var>, SQL request.</p>
+<p>For <var>/destFile</var>, destination file.</p>
+<p>For <var>/suppressHeaders</var>, specify whether headers should be suppressed.</p>
+<p>For <var>/skipLines</var>, number of lines in file to skip</p>
+<p>For <var>/skipDataLines</var>, number of data lines after the header to skip.</p>
+
+<h3 id="SQL"><a href="https://www.sqlite.org/index.html">SQL</a></h3>
+<p>Allows a user to create <a href="https://www.sqlite.org/index.html">SQLite</a> database, create table or add data to it by using file with delimiter.</p>
+<p>For <var>/connection</var>, specify the jdbc connection. Note: For SQLite, just enter "SQLITE"</p>
+<p>For <var>/op</var>, create database option, import table to database or run query on database.</p>
+<p>For <var>/db</var>, SQLite database destination should ends by .db.</p>
+<p>For <var>/srcFile</var>, .txt or .csv file with data.</p>
+<p>For <var>/table</var>, SQLite database table name.</p>
+<p>For <var>/delim</var>, source file delimiter.</p>
+<p>For <var>/mode</var>, OVERWRITE or APPEND database table.</p>
+<p>For <var>/query</var>, SQL request from console or a file.</p>
+<p>For <var>/return</var>, true if output should be printed, else false.</p>
+<p>For <var>/destFile</var>, destination file.</p>
+<p>For <var>/header</var>, true if headers of database table should be skipped, else they would be printed.</p>
+
+<h3>Examples</h3>
+<h5><strong>Zip</strong></h5>
+<p>Archive file <samp>file.txt</samp> from the <samp>example/manual</samp> directory to the
+    <samp>manual.zip</samp> file in the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -zip /srcDir="example/manual/file.txt" /destFile="manual.zip"</pre>
+</div>
+
+<p>Archive file <samp>file.txt</samp> from the <samp>example/manual</samp> directory to the
+    <samp>manual.zip</samp> file in the current directory with logging to the <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -zip /srcDir="example/manual/file.txt" /destFile="manual.zip" /log="logs.txt"</pre>
+</div>
+
+<p>Archive directory <samp>example</samp> from the current directory to the
+    <samp>directory.zip</samp> file from the <samp>zipped/directory</samp> directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -zip /srcDir="example" /destFile="zipped/directory/manual.zip"</pre>
+</div>
+
+<p>Archive directory <samp>example</samp> from thr current directory to the
+    <samp>directory.zip</samp> file from the <samp>zipped/directory</samp> directory with logging to the
+    <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -zip /srcDir="example" /destFile="zipped/directory/manual.zip" /log="logs.txt"</pre>
+</div>
+
+<h5><strong>Unzip</strong></h5>
+<p>Unzip <samp>manual.zip</samp> file from the <samp>unzipped/files</samp> directory
+    to the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -unzip /srcFile="unzipped/files/manual.zip" /destDir=""</pre>
+</div>
+
+<p>Unzip <samp>manual.zip</samp> file from the <samp>zipped/files</samp> directory
+    to the <samp>dest/files</samp> directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -unzip /srcFile="zipped/files/manual.zip" /destDir="dest/files"</pre>
+</div>
+
+<p>Unzip <samp>manual.zip</samp> file from the <samp>unzipped/files</samp> directory
+    to the current directory with logging to the <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -unzip /srcFile="unzipped/files/manual.zip" /destDir="" /log="logs.txt"</pre>
+</div>
+
+<p>Unzip <samp>manual.zip</samp> file from the <samp>zipped/files</samp> directory
+    to the <samp>dest/files</samp> directory with logging to the <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -unzip /srcFile="zipped/files/manual.zip" /destDir="dest/files" /log="logs.txt"</pre>
+</div>
+
+<h5><strong>Convert</strong></h5>
+<p>Convert <samp>manual.csv</samp> file from the current directory, put it
+    to the <samp>test.xlsx</samp> file from the <samp>dest/files</samp> directory by using <samp>;</samp> .csv
+    delimiter, and rename a .xlsx file
+    sheet to the <samp>ABCD</samp>.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -convert /srcFile="manual.csv" /destFile="dest/files/test.xlsx" /delim=";" /sheetname="ABCD" /log="logs.txt"</pre>
+</div>
+
+<p>Convert <samp>manual.csv</samp> file from the current directory, put it
+    to the <samp>test.xlsx</samp> file from the <samp>dest/files</samp> directory by using <samp>;</samp>
+    .csv delimiter, and rename a .xlsx file sheet to the <samp>ABCD</samp> and write all logs to the
+    <samp>logs.txt</samp> file.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -convert /srcFile="manual.csv" /destFile="dest/files/test.xlsx" /delim=";" /sheetname="ABCD" /log="logs.txt"</pre>
+</div>
+
+<p>Convert <samp>test.xlsx</samp> file from the <samp>converted</samp> directory
+    to the <samp>test.csv</samp> file from the <samp>converted</samp> directory by <samp>ABCD</samp> sheetname and
+    write all logs to the
+    <samp>app.log</samp> file.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -convert /srcFile="converted/test.xlsx" /destFile="converted/test.csv" /sheetname="ABCD" /log="app.log"</pre>
+</div>
+
+<p>Convert <samp>test.xlsx</samp> file from the <samp>converted</samp> directory
+    to the <samp>test.csv</samp> file from the <samp>converted</samp> directory by using <samp>;</samp>
+    .csv delimiter and <samp>ABCD</samp> sheetname.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -convert /srcFile="converted/test.xlsx" /destFile="converted/delims/test.csv" /delim=";" /sheetname="ABCD"</pre>
+</div>
+
+<h5><strong>Encrypt</strong></h5>
+<p>Encrypt your entered password and save it to the <samp>password.txt</samp> from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -password /passwordFile="password.txt"</pre>
+</div>
+
+<p>Encrypt your entered password and save it to the <samp>password.txt</samp> from the current directory
+    and write all logs to the <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -password /passwordFile="password.txt" /log="logs.txt"</pre>
+</div>
+
+<h5><strong>Connect</strong></h5>
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory
+    and the <samp>password.txt</samp> file with encrypted password, save results to the <samp>response.json</samp>
+    from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /destFile="response.json" /config="config.properties" /passwordFile="password.txt"</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory
+    and the <samp>password.txt</samp> file with encrypted password, save results to the <samp>response.json</samp>
+    from the current directory and write all logs to the
+    <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /destFile="response.json" /config="config.properties" /passwordFile="password.txt" /log="logs.txt"</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory and
+    save results to the <samp>response.json</samp> from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /destFile="response.json" /config="config.properties"</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory and
+    save results to the <samp>response.json</samp> from the current directory and write all logs to the
+    <samp>logs.txt</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /destFile="response.json" /config="config.properties" /log="logs.txt"</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /config="config.properties"</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /config="config.properties" /reqType=POST /body="BODY TEXT\n IS HERE" /mediaType=multipart/form-data /srcFile="target/smile.png" /destFile=output.txt</pre>
+</div>
+
+<p>Connect to a web service by using the <samp>config.properties</samp> file from the current directory,
+    <samp>GET</samp>
+    HTTP connection method, and by using password from encrypted file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /reqType=GET /config="connect/config.properties" /passwordFile="password/connectPassword.txt"</pre>
+</div>
+
+<p>Filter a json from connect method by using the <samp>config.properties</samp> file from the current directory
+    and the id pattern, then save all results to the <samp>response.json</samp> file from the current directory.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -connect /destFile=response.json /config=config.properties /jsonPath=$.items[?(@.name==\"NAME\"||@.name==\"NAME\")].id</pre>
+</div>
+
+<h5><strong>Json Path</strong></h5>
+<p>Filter a json from the <samp>response.json</samp> file by using the id pattern
+    and save a result to the <samp>filtered.json</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -jsonpath /srcFile=response.json /jsonPath=$.items[?(@.name==\"NAME\"||@.name==\"NAME\")].id /destFile=filtered.json</pre>
+</div>
+
+<p>Filter a json from the <samp>response.json</samp> file by using the id pattern.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -jsonpath /srcFile=response.json /jsonPath=$.items[?(@.name==\"NAME\"||@.name==\"NAME\")].id</pre>
+</div>
+
+<h5><strong>Email</strong></h5>
+<p>Send an email by using the <samp>email.properties</samp> file and <samp>password.txt</samp> file with encrypted
+    password.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -email /config=email.properties /passwordFile=password.txt</pre>
+</div>
+
+<p>Send an email by using the <samp>email.properties</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -email /config=email.properties</pre>
+</div>
+
+<p>Send an email by using the <samp>email.properties</samp> file and save all logs to the <samp>logs.txt</samp>
+    file.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -email /config=email.properties /passwordFile=password.txt /log=logs.txt</pre>
+</div>
+
+<p>Send an email by using the <samp>email.properties</samp> file, subject of email and email body, save all logs to
+    the <samp>logs.txt</samp>
+    file.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -email /subject="SUBJECT" /body="Let's make next Line&lt;br&gt;Next Line" /config=email.properties /log=test.log</pre>
+</div>
+
+<p>Send an email by using the <samp>email.properties</samp> file, subject of email and email body.
+</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -email /subject="SUBJECT" /body="Hello world" /config=email.properties</pre>
+</div>
+
+<h5><strong>Query Delim</strong></h5>
+<p>Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directory with SQL request from a
+    command line.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test where \"3\"='c' or \"1\"='qwerty'"</pre>
+</div>
+
+<p>Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directory with SQL request from a
+    command line with <samp>,</samp> delimiter and write all logs to <samp>app.log</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test where \"3\"='c' or \"1\"='qwerty'" /delim="," /destFile="query/out.txt" /log="app.log"</pre>
+</div>
+
+<p>Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directory with SQL request from a
+    command line with default delimiter, skip two file's lines and write all logs to <samp>app.log</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test" /destFile="query/out.txt" /skipDataLines=2 /log="app.log"</pre>
+</div>
+
+<h5><strong>SQL</strong></h5>
+<p>Create empty SQLite <samp>store.db</samp> database.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=createDB /db=store.db</pre>
+</div>
+
+<p>Create empty SQLite <samp>store.db</samp> database.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=createDB /db=store.db</pre>
+</div>
+
+<p>Creating a table named <samp>ABCD</samp> in the <samp>store.db</samp> database and filling it with data from the <samp>test.csv</samp> file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
+</div>
+
+<p>Add <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test2.csv</samp> file data.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=importTable /db=store.db /mode=overwrite /srcFile=test2.csv /table=A</pre>
+</div>
+
+<p>To overwrite <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test3.csv</samp> file data.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=importTable /db=store.db /mode=overwrite /srcFile=test3.csv /table=A</pre>
+</div>
+
+<p>To add data to <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test4.csv</samp> file data.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=importTable /db=store.db /mode=overwrite /srcFile=test4.csv /table=A</pre>
+</div>
+
+<p>To run SQL query on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result with headers to a console.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=queryDB /db=store.db /query="SELECT * from A" /header=true</pre>
+</div>
+
+<p>To run SQL query on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result without headers to a file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=queryDB /db=store.db /query="SELECT * from A WHERE \"NAME\"=\"TOM\"" /destFile=file.txt</pre>
+</div>
+
+<p>To run SQL query from a <samp>query.txt</samp> file on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result without headers to a console.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -sql /connection="SQLITE" /op=queryDB /db=store.db /query="query.txt"</pre>
+</div>
+
+<h5><strong>Simplified syntax</strong></h5>
+
+<p>To allow easier syntax and faster command execution, we allow multiline commands with some simplified syntax.</p>
+
+<p>Make zip file, unzip it, convert result of previous command to .xlsx file.</p>
+<div class="pre">
+    <button class="copy"></button>
+    <pre>RoboArchitect -zip /src=source.csv /destFile=result.zip ^
+-unzip /srcFile=result.zip /destDir="destination/path" ^
+-convert /srcFile=destination/path/test2.csv /destFile=destination/path/xlsx/target.xlsx /sheetname=ABCD ^
+-iLoveRoboArchitect</pre>
+</div>
+
+</body>
+</html>
