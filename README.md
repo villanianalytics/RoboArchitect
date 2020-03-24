@@ -107,21 +107,24 @@ Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directo
     command line with default delimiter, skip two file's lines and write all logs to <samp>app.log</samp> file.
 <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test" /destFile="query/out.txt" /skipDataLines=2 /log="app.log"</pre>
 
-## SQLite
+## As of Version 1.2.1, the SQLite function has been deprecated. 
+The SQL command has been developed in order to allow future expansion to support multiple database types. See below for updated syntax.
+
+## SQL
 Create empty SQLite <samp>store.db</samp> database.
-<pre>RoboArchitect -sqlite /op=createDB /db=store.db</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=createDB /db=store.db</pre>
 
 Create empty SQLite <samp>store.db</samp> database.
-<pre>RoboArchitect -sqlite /op=createDB /db=store.db</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=createDB /db=store.db</pre>
 
 Creating a table named <samp>ABCD</samp> in the <samp>store.db</samp> database and filling it with data from the <samp>test.csv</samp> file.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
 
 Add <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test2.csv</samp> file data.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test2.csv /table=A</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test2.csv /table=A</pre>
 
 To overwrite <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test3.csv</samp> file data.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test3.csv /table=A</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test3.csv /table=A</pre>
 
 To add data to <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test4.csv</samp> file data.
 <pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test4.csv /table=A</pre>
