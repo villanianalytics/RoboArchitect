@@ -124,6 +124,11 @@ public class SqlCommand extends AbstractCommand {
     public static String jdbcString;
 
     /**
+     * Default true answer.
+     */
+    private static final String DEFAULT_CONN = "SQLITE";
+
+    /**
      * System logger.
      */
     private Logger logger = Logger.getLogger(ConnectCommand.class);
@@ -146,7 +151,7 @@ public class SqlCommand extends AbstractCommand {
         logger.debug("File path is created: " + db.getParentFile().mkdirs());
         opDB = db.getCanonicalPath();
 
-        String dbConnection = getRequiredAttribute(CONN_PARAMETER);
+        String dbConnection = getDefaultAttribute(CONN_PARAMETER,DEFAULT_CONN);
         if (dbConnection.equalsIgnoreCase("sqlite"))
         {
             jdbcString= JDBC_SQLITE + opDB;
