@@ -481,10 +481,8 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     public String unSqlFilter(String query, String json, String destFile) throws MissedParameterException {
         String filteredJson = "";
-        UnSql unsql = new UnSql(json);
-        
         try {
-        	filteredJson = unsql.executeQuery(query, getExportFormat(destFile));
+        	filteredJson = new UnSql(json).withExportFormat(getExportFormat(destFile)).execute(query);
 		} catch (UnSqlException e) {
 			throw new MissedParameterException(e.getMessage());
 		}

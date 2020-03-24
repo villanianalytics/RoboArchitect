@@ -77,6 +77,35 @@ public class RAMainApplicationTest {
                                                "    }\n" +
                                                "  }\n" +
                                                "}";
+    
+    private static final String jsonResponseUnsql = "{\n" +
+									            "  \"field1\": \"aa11\",\n" +
+									            "  \"field2\": [\n" +
+									            "    \"aa22\"\n" +
+									            "  ],\n" +
+									            "  \"structField\": {\n" +
+									            "    \"sf1\": [\n" +
+									            "      \"aaa11\",\n" +
+									            "      \"test\"\n" +
+									            "    ]," +
+									            "\n" +
+									            "    \"sf2\": {\n" +
+									            "      \"val1\": \"test1\",\n"+
+									            "      \"val2\": \"test2\",\n"+
+									            "      \"aaa22\": {\n" +
+									            "        \"test\": [\n" +
+									            "          1,\n" +
+									            "          2,\n" +
+									            "          3,\n" +
+									            "          4\n" +
+									            "        ]\n" +
+									            "      }\n" +
+									            "    }\n" +
+									            "  },\"employees\":[\n" + 
+									            "    {\"email\": \"test\"},\n" + 
+									            "    {\"name\":\"Bob\", \"email\":\"bob32@gmail.com\"}\n" +
+									            "	]\n" +
+									            "}";
     /**
      * Path to file which is expected.
      */
@@ -263,14 +292,30 @@ public class RAMainApplicationTest {
 
     @Test
     public void testUnSQL() throws IOException {
-
-        testUnSQL("select field1 from *", "aa11");
+    	testUnSQL("select field1 from *", "aa11");
 
         testUnSQL("select field2 from *", "aa22");
 
-        testUnSQL("select sf1 from structField", "aaa11\ntest");
-        testUnSQL("select sf2 from structfield", "1\n2\n3\n4");
+        testUnSQL("select sf1 from structField", "aaa11,test");
+        
+        testUnSQL("select sf2 from structfield", "1,2,3,4");
+        
+        testUnSQL("select field2 from *", "field2\naa22", "true", ",");
+
+        testUnSQL("select field1, field2 from *", "field1,field2\naa11,aa22", "true", ",");
        
+    	testUnSQL("select * from employees", "email|name\ntest|\nbob32@gmail.com|Bob", "true", "|");
+    	
+        testUnSQL("select * from structfield", "sf1[0]|sf1[1]|val1|val2|test[0]|test[1]|test[2]|test[3]\naaa11|test|test1|test2|1|2|3|4", "true", "|");
+        
+        testUnSQL("select * from structfield.sf2.aaa22.test", "4|||\n||3|\n|||2\n|1||", "", "|");
+   
+        testUnSQL("select * from structfield.sf2.aaa22", "1|2|3|4", "", "|");
+        
+        testUnSQL("select val1, aaa22.test, val2 from structfield.sf2", "val1|aaa22.test|val2\ntest1|1,2,3,4|test2", "true", "|");
+        
+        testUnSQL("select sf2, sf1 from structfield", "sf2|sf1\ntest1,test2,1,2,3,4|aaa11,test", "true", "|");
+        
         System.setOut(originOut);
     }
     
@@ -412,7 +457,28 @@ public class RAMainApplicationTest {
         FileUtils.deleteQuietly(destFile);
         outputStream.reset();
     }
+    
+	private void testUnSQL(String query, String expected, String headers, String delimiter) throws IOException {
+		Properties properties = new Properties();
+		@Cleanup
+		FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
+		properties.load(reader);
+		PropertyConfigurator.configure(properties);
 
+		File srcFile = Paths.get("test.json").toFile();
+		FileUtils.write(srcFile, jsonResponseUnsql, UTF_8);
+
+		File destFile = Paths.get("out.txt").toFile();
+		RAMainApplication.main(new String[] { "-unsql", "/srcFile=test.json", "/destFile=" + destFile,
+				"/query=" + query, "/delimiter=" + delimiter, "/headers=" + headers });
+
+		String json = FileUtils.readFileToString(destFile, UTF_8);
+		assertEquals(expected, json);
+
+		FileUtils.deleteQuietly(srcFile);
+		FileUtils.deleteQuietly(destFile);
+		outputStream.reset();
+	}
 
     private void testInvalidCommand(String command, String expected) throws IOException {
     	outputStream.reset();
