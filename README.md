@@ -107,7 +107,7 @@ Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directo
     command line with default delimiter, skip two file's lines and write all logs to <samp>app.log</samp> file.
 <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test" /destFile="query/out.txt" /skipDataLines=2 /log="app.log"</pre>
 
-## As of Version 1.2.1, the SQLite function has been deprecated. 
+## As of Version 1.2.2, the SQLite function has been replaced with SQL 
 The SQL command has been developed in order to allow future expansion to support multiple database types. See below for updated syntax.
 
 ## SQL
