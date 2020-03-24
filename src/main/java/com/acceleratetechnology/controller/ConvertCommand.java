@@ -6,6 +6,7 @@ import lombok.Cleanup;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -47,6 +48,11 @@ public class ConvertCommand extends AbstractCommand {
      */
     private static final String SHEET_NAME_PARAM = "/sheetname";
 
+    /**
+     * Sheetname DEFAULT parameter.
+     */
+    private static final String DEFAULT_SHEET_NAME = "Sheet1";
+
     @Command("-convert")
     public ConvertCommand(String[] args) throws IOException, MissedParameterException {
         super(args);
@@ -57,10 +63,11 @@ public class ConvertCommand extends AbstractCommand {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
         String destFile = getRequiredAttribute(DEST_FILE_PARAM);
         char delim = getDefaultAttribute(DELIM_PARAM, ",").charAt(0);
-        String sheetName = getRequiredAttribute(SHEET_NAME_PARAM);
+        String sheetName = getDefaultAttribute(SHEET_NAME_PARAM, DEFAULT_SHEET_NAME);
 
         String extension = FilenameUtils.getExtension(srcFile);
         if (extension.equals("csv") || extension.equals("txt")) {
+            String destExtension = FilenameUtils.getExtension(destFile);
             convertCSVFile(srcFile, destFile, delim, sheetName);
         } else if (extension.equals("xlsx")) {
             convertXLSXFile(srcFile, sheetName, destFile, delim);
@@ -82,6 +89,9 @@ public class ConvertCommand extends AbstractCommand {
     private void convertCSVFile(String srcCSVFile, String destXLSXFile, char delim, String sheetName) throws IOException {
         logger.debug("Create XLSX file with " + sheetName + "sheetname.");
         @Cleanup XSSFWorkbook workBook = new XSSFWorkbook();
+        POIXMLProperties xmlProps = workBook.getProperties();
+        POIXMLProperties.CoreProperties coreProps =  xmlProps.getCoreProperties();
+        coreProps.setCreator("RoboArchitect by Villani Analytics");
         XSSFSheet sheet = workBook.createSheet(sheetName);
         logger.debug("File created.");
 
