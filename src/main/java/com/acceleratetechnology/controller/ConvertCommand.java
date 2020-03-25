@@ -61,11 +61,29 @@ public class ConvertCommand extends AbstractCommand {
     @Override
     public void execute() throws MissedParameterException, IOException {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
-        String destFile = getRequiredAttribute(DEST_FILE_PARAM);
+        String extension = FilenameUtils.getExtension(srcFile);
+
+        String destFile = getAttribute(DEST_FILE_PARAM);
+        logger.debug(destFile);
+        if (destFile == null)
+        {
+            logger.debug("No destFile entered");
+            if (extension.equals("xlsx"))
+            {
+                destFile=FilenameUtils.getBaseName(srcFile)+".csv";
+                logger.debug("Assigning destFile as "+destFile);
+            }
+            else if (extension.equals("csv")||extension.equals("txt"))
+            {
+                destFile=FilenameUtils.getBaseName(srcFile)+".xlsx";
+                logger.debug("Assigning destFile as "+destFile);
+            }
+        }
+
+
         char delim = getDefaultAttribute(DELIM_PARAM, ",").charAt(0);
         String sheetName = getDefaultAttribute(SHEET_NAME_PARAM, DEFAULT_SHEET_NAME);
 
-        String extension = FilenameUtils.getExtension(srcFile);
         if (extension.equals("csv") || extension.equals("txt")) {
             String destExtension = FilenameUtils.getExtension(destFile);
             convertCSVFile(srcFile, destFile, delim, sheetName);
