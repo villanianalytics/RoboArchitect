@@ -70,12 +70,12 @@ public class ConvertCommand extends AbstractCommand {
             logger.debug("No destFile entered");
             if (extension.equals("xlsx"))
             {
-                destFile=FilenameUtils.getBaseName(srcFile)+".csv";
+                destFile=FilenameUtils.getFullPath(srcFile) + FilenameUtils.getBaseName(srcFile)+".csv";
                 logger.debug("Assigning destFile as "+destFile);
             }
             else if (extension.equals("csv")||extension.equals("txt"))
             {
-                destFile=FilenameUtils.getBaseName(srcFile)+".xlsx";
+                destFile=FilenameUtils.getFullPath(srcFile) + FilenameUtils.getBaseName(srcFile)+".xlsx";
                 logger.debug("Assigning destFile as "+destFile);
             }
         }
