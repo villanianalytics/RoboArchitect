@@ -20,12 +20,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Create, add or run SQL requests in SQLite Database.
  */
-public class SqliteCommand extends AbstractCommand {
+public class SqlCommand extends AbstractCommand {
     /**
      * Run SQL command option. It could be {@link #CREATE_DB_OPTION}, {@link #IMPORT_TABLE_OPTION},
      * {@link #QUERY_DB_OPTION}.
      */
     private static final String OP_PARAMETER = "/op";
+    /**
+     * Connection Type.
+     */
+    private static final String CONN_PARAMETER = "/connection";
     /**
      * Database file.
      */
@@ -114,6 +118,15 @@ public class SqliteCommand extends AbstractCommand {
      * SQLite package directory.
      */
     private static final String JDBC_SQLITE = "jdbc:sqlite:";
+    /**
+     * JDBC Connection String
+     */
+    public static String jdbcString;
+
+    /**
+     * Default true answer.
+     */
+    private static final String DEFAULT_CONN = "SQLITE";
 
     /**
      * System logger.
@@ -121,8 +134,9 @@ public class SqliteCommand extends AbstractCommand {
     private Logger logger = Logger.getLogger(ConnectCommand.class);
 
 
-    @Command("-sqlite")
-    public SqliteCommand(String[] args) throws IOException, MissedParameterException {
+
+    @Command("-sql")
+    public SqlCommand(String[] args) throws IOException, MissedParameterException {
         super(args);
     }
 
@@ -131,14 +145,24 @@ public class SqliteCommand extends AbstractCommand {
         String opCmd = getRequiredAttribute(OP_PARAMETER);
         String opDB = getRequiredAttribute(DB_NAME_PARAMETER);
 
+
         Class.forName(JDBC.class.getCanonicalName());
         File db = Paths.get(opDB).toAbsolutePath().toFile();
         logger.debug("File path is created: " + db.getParentFile().mkdirs());
         opDB = db.getCanonicalPath();
 
+        String dbConnection = getDefaultAttribute(CONN_PARAMETER,DEFAULT_CONN);
+        if (dbConnection.equalsIgnoreCase("sqlite"))
+        {
+            jdbcString= JDBC_SQLITE + opDB;
+        }
+
+
+
+
         switch (opCmd) {
             case CREATE_DB_OPTION:
-                createDB(opDB);
+                createDB(jdbcString,opDB);
                 break;
             case IMPORT_TABLE_OPTION: {
                 String srcFile = getRequiredAttribute(SRC_FILE_PARAMETER);
@@ -146,7 +170,7 @@ public class SqliteCommand extends AbstractCommand {
                 String delim = getDefaultAttribute(DELIM_PARAMETER, DEFAULT_DELIM);
                 String updateMode = getDefaultAttribute(MODE_PARAMETER, DEFAULT_MODE);
 
-                importTable(opDB, tableName, srcFile, delim.charAt(0), updateMode);
+                importTable(jdbcString, opDB, tableName, srcFile, delim.charAt(0), updateMode);
                 break;
             }
             case QUERY_DB_OPTION: {
@@ -175,7 +199,8 @@ public class SqliteCommand extends AbstractCommand {
                 boolean returnFlag = isTrue(returnString);
                 boolean header = isTrue(headerFlag);
 
-                executeQuery(opDB, query, returnFlag, outFile, header);
+
+                executeQuery(jdbcString, opDB, query, returnFlag, outFile, header);
                 break;
             }
         }
@@ -191,8 +216,8 @@ public class SqliteCommand extends AbstractCommand {
      * @param dbName Database name.
      * @throws SQLException throws when database access error or other errors.
      */
-    public void createDB(String dbName) throws SQLException {
-        @Cleanup Connection c = DriverManager.getConnection(JDBC_SQLITE + dbName);
+    public void createDB(String jdbcConnection,String dbName) throws SQLException {
+        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
         logger.debug("Creating database " + dbName);
         logger.info("Successfully created database");
     }
@@ -208,8 +233,8 @@ public class SqliteCommand extends AbstractCommand {
      * @throws SQLException throws when database access error or other errors.
      * @throws IOException  thrown in case of an I/O error.
      */
-    public void executeQuery(String dbName, String query, boolean returnFlag, HashMap<String, String> outFile, boolean header) throws SQLException, IOException {
-        @Cleanup Connection c = DriverManager.getConnection(JDBC_SQLITE + dbName);
+    public void executeQuery(String jdbcConnection, String dbName, String query, boolean returnFlag, HashMap<String, String> outFile, boolean header) throws SQLException, IOException {
+        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
         c.setAutoCommit(false);
         logger.debug("Opened database successfully");
         @Cleanup Statement stmt = c.createStatement();
@@ -292,8 +317,8 @@ public class SqliteCommand extends AbstractCommand {
      * @throws SQLException throws when database access error or other errors.
      * @throws IOException  thrown in case of an I/O error
      */
-    public void importTable(String dbName, String tableName, String fileName, char delim, String updateMode) throws SQLException, IOException {
-        @Cleanup Connection c = DriverManager.getConnection(JDBC_SQLITE + dbName);
+    public void importTable(String jdbcConnection,String dbName, String tableName, String fileName, char delim, String updateMode) throws SQLException, IOException {
+        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
         c.setAutoCommit(false);
         logger.debug("Opened database successfully");
 
@@ -311,7 +336,7 @@ public class SqliteCommand extends AbstractCommand {
 
         String[] nextRecord;
         if (updateMode.equalsIgnoreCase(OVERWRITE)) {
-            executeQuery(dbName, "Drop Table if exists " + tableName, false, null, false);
+            executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
 
             //create table  based on file
             //Logic to create table based on # of columns with header as column names
@@ -323,7 +348,7 @@ public class SqliteCommand extends AbstractCommand {
                 }
 
             }
-            executeQuery(dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
+            executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
         }
 
 

@@ -87,8 +87,16 @@ public abstract class AbstractCommand {
         properties.load(resourceAsStream);
         properties.put(LOG_FILE_PROPERTY_SETTINGS, logFile);
         String logLevel = getAttribute("/logLevel");
-        if (logLevel != null && !logLevel.isEmpty()) {
-            properties.put("log4j.appender.stdout.Threshold", logLevel);
+        if(logLevel!=null){
+            properties.put("log4j.appender.stdout.Threshold",logLevel);
+            properties.put("log4j.appender.file.Threshold",logLevel);
+
+        }
+        else
+        {
+            properties.put("log4j.appender.stdout.Threshold","INFO");
+            properties.put("log4j.appender.file.Threshold","INFO");
+            properties.put("log4j.appender.file.layout.ConversionPattern","%d{yyyy-MM-dd HH:mm:ss} [%-5p]:: %m%n");
         }
         PropertyConfigurator.configure(properties);
     }

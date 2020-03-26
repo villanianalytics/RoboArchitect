@@ -5,15 +5,15 @@
      response, parse data from JSON, and run SQL against a .csv/.txt file or create SQLite database and run SQL request
      there.
 ## Description
-This is application can make different things, namely:
-1) To <i>zip</i> and <i>unzip</i> files and directories.
-2) To convert <i>.csv</i> files to <i>.xlsx</i> and vice versa.
-3) To encrypt your password and save it to a specified file.
-4) To connect to any web service and get a full or partial response.
-5) To parse <i>JSON</i> files and get specified values.
-6) To send customizable emails.
-7) To executes SQL queries using delimited files as the basis.
-8) Creates an SQLite database, add tables there with data from delimited files or adds
+This is application can:
+1) <i>zip</i> and <i>unzip</i> files and directories.
+2) convert <i>.csv</i> files to <i>.xlsx</i> and vice versa.
+3) encrypt your password and save it to a specified file.
+4) connect to any web service and get a full or partial response.
+5) parse <i>JSON</i> files and get specified values.
+6) send customizable emails.
+7) executes SQL queries using delimited files as the basis.
+8) create an SQLite database, add tables there with data from delimited files or adds
        data to an existing table. It can also execute SQL queries to the database and write the result to a file or display
        it on the console.
 ## Functions
@@ -107,35 +107,38 @@ Run SQL for the <samp>test.csv</samp> file in the <samp>converted</samp> directo
     command line with default delimiter, skip two file's lines and write all logs to <samp>app.log</samp> file.
 <pre>RoboArchitect -querydelim /srcFile="converted/test.csv" /query="Select * from test" /destFile="query/out.txt" /skipDataLines=2 /log="app.log"</pre>
 
-## SQLite
+## As of Version 1.2.2, the SQLite function has been replaced with SQL 
+The SQL command has been developed in order to allow future expansion to support multiple database types. See below for updated syntax.
+
+## SQL
 Create empty SQLite <samp>store.db</samp> database.
-<pre>RoboArchitect -sqlite /op=createDB /db=store.db</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=createDB /db=store.db</pre>
 
 Create empty SQLite <samp>store.db</samp> database.
-<pre>RoboArchitect -sqlite /op=createDB /db=store.db</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=createDB /db=store.db</pre>
 
 Creating a table named <samp>ABCD</samp> in the <samp>store.db</samp> database and filling it with data from the <samp>test.csv</samp> file.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test.csv /table=ABCD</pre>
 
 Add <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test2.csv</samp> file data.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test2.csv /table=A</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test2.csv /table=A</pre>
 
 To overwrite <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test3.csv</samp> file data.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test3.csv /table=A</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test3.csv /table=A</pre>
 
 To add data to <samp>A</samp> table in SQLite <samp>store.db</samp> database by adding <samp>test4.csv</samp> file data.
-<pre>RoboArchitect -sqlite /op=importTable /db=store.db /mode=overwrite /srcFile=test4.csv /table=A</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=importTable /db=store.db /mode=overwrite /srcFile=test4.csv /table=A</pre>
 
 To run SQL query on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result with headers to a console.
-<pre>RoboArchitect -sqlite /op=queryDB /db=store.db /query="SELECT * from A" /header=true</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=queryDB /db=store.db /query="SELECT * from A" /header=true</pre>
 
 To run SQL query on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result without headers to a file.
-<pre>RoboArchitect -sqlite /op=queryDB /db=store.db /query="SELECT * from A WHERE \"NAME\"=\"TOM\"" /destFile=file.txt</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=queryDB /db=store.db /query="SELECT * from A WHERE \"NAME\"=\"TOM\"" /destFile=file.txt</pre>
 
  To run SQL query from a <samp>query.txt</samp> file on <samp>A</samp> table in SQLite <samp>store.db</samp> database and print result without headers to a console.
-<pre>RoboArchitect -sqlite /op=queryDB /db=store.db /query="query.txt"</pre>
+<pre>RoboArchitect -sql /connection="sqlite" /op=queryDB /db=store.db /query="query.txt"</pre>
 ## Maven settings
-1) To make executable files you need to add to in pom.xml file
+1) To make the executable files you need to add to in pom.xml file
 path to OpenJDK <i>.zip</i> file. <strong>Keep attention that OpenJDK needs to be for X64 Systems.</strong>
 <pre>&lt;!--Need to be changed to your linux64(mac) openJDK-->
 &lt;argument>packaging/zulu8.44.0.11-ca-jdk8.0.242-linux_x64.zip&lt;/argument></pre>
