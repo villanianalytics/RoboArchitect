@@ -67,7 +67,7 @@ public abstract class AbstractCommand {
     private void writeLogsToFile() throws IOException, MissedParameterException {
         if (attributes.containsKey(LOG_ATTRIBUTE)) {
             String logFile = attributes.get(LOG_ATTRIBUTE);
-            if (!logFile.isEmpty()) {
+            if (logFile != null && !logFile.isEmpty()) {
                 System.setProperty("log.file", logFile);
                 initLogFile(logFile);
             } else {
@@ -87,7 +87,7 @@ public abstract class AbstractCommand {
         properties.load(resourceAsStream);
         properties.put(LOG_FILE_PROPERTY_SETTINGS, logFile);
         String logLevel = getAttribute("/logLevel");
-        if (logLevel != null) {
+        if (logLevel != null && !logLevel.isEmpty()) {
             properties.put("log4j.appender.stdout.Threshold", logLevel);
         }
         PropertyConfigurator.configure(properties);
