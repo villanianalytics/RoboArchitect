@@ -152,6 +152,12 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
 	/** The headers flag. */
 	private boolean headersFlag = false;
 
+	
+	private static final String XML_FILE = ".xml";
+	private static final String JSON_FILE = ".json";
+	private static final String TEXT_FILE = ".txt";
+	
+	
     /**
      * Instantiates a new connect command.
      *
@@ -238,6 +244,10 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
             } else {
             	if (!StringUtils.isEmpty(delimiterAttr)) setDelimiterValue(delimiterAttr);
             	if (!StringUtils.isEmpty(headersAttr)) setHeadersFlag(true);
+            }
+            
+            if (unSqlQuery.endsWith(".txt")) {
+            	unSqlQuery = readQueryFile(unSqlQuery);
             }
             
             response = unSqlFilter(unSqlQuery, response, destFile);
@@ -542,14 +552,29 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     	String results = "";
        
     	try {
-        	if (destFile != null && destFile.endsWith(".xml")) {
-        		results = new UnSql(json).withExportFormat(EXPORT_FORMAT.XML).execute(query);
-        	} else  if (destFile != null && destFile.endsWith(".json")) {
-        		results = new UnSql(json).withExportFormat(EXPORT_FORMAT.JSON).execute(query);
-        	} else  if (destFile != null && destFile.endsWith(".txt")) {
-        		results = new UnSql(json).withExportFormat(EXPORT_FORMAT.VALUES).withRowDelimiter(delimiterValue).withHeaders(headersFlag).execute(query);
+        	if (destFile != null && destFile.endsWith(XML_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.XML)
+        				.execute(query);
+        		
+        	} else  if (destFile != null && destFile.endsWith(JSON_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.JSON)
+        				.execute(query);
+        		
+        	} else  if (destFile != null && destFile.endsWith(TEXT_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.VALUES)
+        				.withRowDelimiter(delimiterValue)
+        				.withHeaders(headersFlag)
+        				.execute(query);
+        		
         	} else {
-        		results = new UnSql(json).withExportFormat(EXPORT_FORMAT.VALUES).withRowDelimiter(delimiterValue).withHeaders(headersFlag).execute(query);
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.VALUES)
+        				.withRowDelimiter(delimiterValue)
+        				.withHeaders(headersFlag)
+        				.execute(query);
         	}
   		} catch (UnSqlException e) {
 			throw new MissedParameterException(e.getMessage());
@@ -557,6 +582,12 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         
         logger.info(results);
         return results;
+    }
+    
+    private String readQueryFile(String filePath) throws IOException {
+    	String query = FileUtils.readFileToString(Paths.get(filePath).toFile(), UTF_8);
+    	
+    	return query.replaceAll("\\r|\\n", "");
     }
 
     /**
