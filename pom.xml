@@ -497,6 +497,12 @@
 			<artifactId>unsql</artifactId>
 			<version>0.0.9</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.eclipsesource.minimal-json</groupId>
+			<artifactId>minimal-json</artifactId>
+			<version>0.9.5</version>
+		</dependency>
         
         <dependency>
             <groupId>com.google.code.gson</groupId>
