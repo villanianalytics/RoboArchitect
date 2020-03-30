@@ -1,9 +1,17 @@
 package com.acceleratetechnology.controller;
 
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import com.opencsv.CSVWriter;
-import lombok.Cleanup;
-import org.apache.commons.io.FileUtils;
+import static org.apache.poi.ss.usermodel.CellType.BLANK;
+import static org.apache.poi.ss.usermodel.CellType.FORMULA;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLProperties;
@@ -15,13 +23,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
+import com.acceleratetechnology.controller.exceptions.MissedParameterException;
+import com.opencsv.CSVWriter;
 
-import static org.apache.poi.ss.usermodel.CellType.BLANK;
-import static org.apache.poi.ss.usermodel.CellType.FORMULA;
+import lombok.Cleanup;
 
 /**
  * Convert .csv file to .xlsx file.

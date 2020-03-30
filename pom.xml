@@ -6,7 +6,7 @@
 
     <groupId>com.acceleratetechnology</groupId>
     <artifactId>RoboArchitect</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
 
     <profiles>
         <profile>
@@ -491,7 +491,19 @@
             <version>2.6</version>
             <scope>compile</scope>
         </dependency>
-
+		
+		<dependency>
+			<groupId>com.github.villanianalytics.unsql</groupId>
+			<artifactId>unsql</artifactId>
+			<version>0.0.9</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.eclipsesource.minimal-json</groupId>
+			<artifactId>minimal-json</artifactId>
+			<version>0.9.5</version>
+		</dependency>
+        
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
