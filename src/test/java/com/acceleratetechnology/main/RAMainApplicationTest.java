@@ -374,20 +374,20 @@ public class RAMainApplicationTest {
     }
 
     private void testSQLite(String db) throws IOException {
-        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=createDB /db=\"" + db + "\""));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=createDB /db=\"" + db + "\""));
 
         File expectedFile = Paths.get(db).toFile();
         assertTrue(expectedFile.exists());
         assertEquals(0, expectedFile.length());
 
-        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
 
         System.setOut(out);
         Properties properties = new Properties();
         @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
         properties.load(reader);
         PropertyConfigurator.configure(properties);
-        RAMainApplication.main(Commandline.translateCommandline("-sqlite /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\" /header=true"));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\" /header=true"));
 
         String actual = outputStream.toString().trim();
 

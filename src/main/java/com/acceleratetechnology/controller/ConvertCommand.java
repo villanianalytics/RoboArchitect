@@ -14,6 +14,7 @@ import java.util.Scanner;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -52,6 +53,11 @@ public class ConvertCommand extends AbstractCommand {
      */
     private static final String SHEET_NAME_PARAM = "/sheetname";
 
+    /**
+     * Sheetname DEFAULT parameter.
+     */
+    private static final String DEFAULT_SHEET_NAME = "Sheet1";
+
     @Command("-convert")
     public ConvertCommand(String[] args) throws IOException, MissedParameterException {
         super(args);
@@ -60,12 +66,31 @@ public class ConvertCommand extends AbstractCommand {
     @Override
     public void execute() throws MissedParameterException, IOException {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
-        String destFile = getRequiredAttribute(DEST_FILE_PARAM);
-        char delim = getDefaultAttribute(DELIM_PARAM, ",").charAt(0);
-        String sheetName = getRequiredAttribute(SHEET_NAME_PARAM);
-
         String extension = FilenameUtils.getExtension(srcFile);
+
+        String destFile = getAttribute(DEST_FILE_PARAM);
+        logger.debug(destFile);
+        if (destFile == null)
+        {
+            logger.debug("No destFile entered");
+            if (extension.equals("xlsx"))
+            {
+                destFile=FilenameUtils.getFullPath(srcFile) + FilenameUtils.getBaseName(srcFile)+".csv";
+                logger.debug("Assigning destFile as "+destFile);
+            }
+            else if (extension.equals("csv")||extension.equals("txt"))
+            {
+                destFile=FilenameUtils.getFullPath(srcFile) + FilenameUtils.getBaseName(srcFile)+".xlsx";
+                logger.debug("Assigning destFile as "+destFile);
+            }
+        }
+
+
+        char delim = getDefaultAttribute(DELIM_PARAM, ",").charAt(0);
+        String sheetName = getDefaultAttribute(SHEET_NAME_PARAM, DEFAULT_SHEET_NAME);
+
         if (extension.equals("csv") || extension.equals("txt")) {
+            String destExtension = FilenameUtils.getExtension(destFile);
             convertCSVFile(srcFile, destFile, delim, sheetName);
         } else if (extension.equals("xlsx")) {
             convertXLSXFile(srcFile, sheetName, destFile, delim);
@@ -87,6 +112,9 @@ public class ConvertCommand extends AbstractCommand {
     private void convertCSVFile(String srcCSVFile, String destXLSXFile, char delim, String sheetName) throws IOException {
         logger.debug("Create XLSX file with " + sheetName + "sheetname.");
         @Cleanup XSSFWorkbook workBook = new XSSFWorkbook();
+        POIXMLProperties xmlProps = workBook.getProperties();
+        POIXMLProperties.CoreProperties coreProps =  xmlProps.getCoreProperties();
+        coreProps.setCreator("RoboArchitect by Villani Analytics");
         XSSFSheet sheet = workBook.createSheet(sheetName);
         logger.debug("File created.");
 

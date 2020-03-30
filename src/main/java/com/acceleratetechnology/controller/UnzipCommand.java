@@ -38,7 +38,7 @@ public class UnzipCommand extends AbstractCommand {
         String dest = getDefaultAttribute(DEST_DIR_PARAM,"");
 
         unzip(srcFile, dest);
-        logger.error("Unzipped.");
+        logger.info("Unzipped.");
     }
 
     /**

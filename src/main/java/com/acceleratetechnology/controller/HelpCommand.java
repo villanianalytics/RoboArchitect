@@ -29,7 +29,8 @@ public class HelpCommand extends AbstractCommand {
                                         "/srcFile=\"DELIMITED_FILE\" /query=\"SQL_QUERY\" [/delim=\"DELIMITER\"] [/destFile=\"FILE\"]\n" +
                                         "\t[/suppressHeaders=\"false or true\"] [/skipLines=\"NUMBER\"] [/skipDataLines=\"NUMBER\"] [/log=\"LOG_FILE\"]\n";
 
-    private static final String SQLITE = "-sqlite                 Create SQLite database, create table and fill it by values from delimited file\n\n\t" +
+    private static final String SQL = "-sql                 Create SQL database, create table and fill it by values from delimited file\n\n\t" +
+                                        "/connection=\"jdbc connection string. For SQLite, enter SQLITE\"\n" +
                                         "/op=\"createDB or importTable or queryDB\" /db=\"Database.db\"\n" +
                                          "\t[/srcFile=\"CSV_FILE\"] [/table=\"TABLE_NAME\"] [/delim=\"DELIMITER\"] [/mode=\"OVERWRITE or APPEND\"]\n" +
                                          "\t[/query=\"SQL_QUERY\"] [/return=\"Y or N\"] [/destFile=\"FILE\"] [/header=\"Y or N\"] [/log=\"LOG_FILE\"]\n" +
@@ -54,6 +55,6 @@ public class HelpCommand extends AbstractCommand {
         logger.info(JSON_PATH);
         logger.info(EMAIL);
         logger.info(QUERY_DELIM);
-        logger.info(SQLITE);
+        logger.info(SQL);
     }
 }
