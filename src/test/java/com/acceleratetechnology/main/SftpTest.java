@@ -23,7 +23,6 @@ import org.apache.tools.ant.types.Commandline;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -33,22 +32,25 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class SftpTest {
 
-	@Rule
-	public TemporaryFolder tempFolder = new TemporaryFolder();
-
     private static final String USERNAME = "username";
     
     private static final String PASSWORD = "password";
     
     private SshServer sshd;
     
+    private TemporaryFolder tempFolder;
+    
     @Before
     public void prepare() throws IOException {
+    	tempFolder = new TemporaryFolder();
+    	tempFolder.create();
+    	
         setupSSHServer();
     }
 
     private void setupSSHServer() throws IOException {
     	Security.addProvider(new BouncyCastleProvider());
+    
 		File homeFolder = tempFolder.getRoot();
 		
 		VirtualFileSystemFactory f = new VirtualFileSystemFactory(homeFolder.toPath());
@@ -72,6 +74,7 @@ public class SftpTest {
     
     @After
     public void cleanup() throws InterruptedException {
+    	tempFolder.delete();
         try {
             sshd.stop(true);
         } catch (Exception e) {
@@ -80,8 +83,7 @@ public class SftpTest {
     
     @Test
     public void testSftpUpload() throws IOException {
-    	File file = File.createTempFile( "test", "txt");
-    	file.deleteOnExit();
+    	File.createTempFile( "test", "txt");
     	
     	testSftp("-sftpUpload /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
     	
