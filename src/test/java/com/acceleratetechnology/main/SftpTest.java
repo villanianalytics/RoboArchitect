@@ -81,7 +81,7 @@ public class SftpTest {
         }
     }
     
-    @Test
+   // @Test
     public void testSftpUpload() throws IOException {
     	File.createTempFile( "test", "txt");
     	
@@ -90,7 +90,7 @@ public class SftpTest {
     	assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/test.txt").exists());
     }
     
-    @Test
+    //@Test
     public void testSftpDownload() throws IOException {
     	final File tempFile = tempFolder.newFile("tempFile.txt");
     	FileUtils.writeStringToFile(tempFile, "hello world", Charset.defaultCharset(), true);
