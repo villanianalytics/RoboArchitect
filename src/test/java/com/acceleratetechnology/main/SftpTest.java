@@ -87,7 +87,11 @@ public class SftpTest {
     
     @Test
     public void testSftpUpload() throws IOException {
-    	testSftp("-sftpUpload /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=src/test/resources/test.txt /to=./");
+    	File file = File.createTempFile( "test", "txt");
+    	file.deleteOnExit();
+    	
+    	testSftp("-sftpUpload /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
+    	
     	exit.checkAssertionAfterwards(new Assertion() {
             @Override
             public void checkAssertion() throws Exception {

@@ -86,7 +86,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 				type, host, String.valueOf(port), password, privateKeyLocation, fromFile, toFile));
 
 		if (DOWNLOAD.equalsIgnoreCase(type)) {
-			sftpDowload(host, port, user, password, privateKeyLocation, fromFile, toFile);
+			sftpDownload(host, port, user, password, privateKeyLocation, fromFile, toFile);
 		}
 		
 		if (UPLOAD.contentEquals(type)) {
@@ -144,7 +144,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	}
 	
 	/**
-	 * Sftp dowload.
+	 * Sftp download.
 	 *
 	 * @param host the host
 	 * @param port the port
@@ -156,7 +156,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @throws JSchException the j sch exception
 	 * @throws SftpException the sftp exception
 	 */
-	private void sftpDowload(String host, int port, String user, String password, String privateKeyLocation,
+	private void sftpDownload(String host, int port, String user, String password, String privateKeyLocation,
 			String fromFilePath, String toFilePath) throws JSchException, SftpException  {
 		ChannelSftp channelSftp = setupJsch(port, host, user, password, privateKeyLocation);
 		
