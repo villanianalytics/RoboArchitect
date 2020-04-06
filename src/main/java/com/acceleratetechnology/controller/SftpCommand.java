@@ -1,5 +1,6 @@
 package com.acceleratetechnology.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +59,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @throws MissedParameterException the missed parameter exception
 	 */
-	@Command("-sftpUpload")
+	@Command("-sftp")
 	public SftpCommand(String[] args) throws IOException, MissedParameterException {
 		super(args);
 	}
@@ -106,10 +107,13 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @param privateKeyLocation the private key location
 	 * @return the channel sftp
 	 * @throws JSchException the j sch exception
+	 * @throws IOException 
 	 */
 	private ChannelSftp setupJsch(int port, String host, String username, String password, String privateKeyLocation) throws JSchException {
 	    JSch jsch = new JSch();
-	    if (!StringUtils.isEmpty(privateKeyLocation)) jsch.addIdentity(privateKeyLocation);
+	    if (!StringUtils.isEmpty(privateKeyLocation)) {
+	    	jsch.addIdentity(privateKeyLocation);
+	    }
 	    	    
 	    Session jschSession = jsch.getSession(username, host, port);
 	    java.util.Properties config = new java.util.Properties(); 
@@ -139,7 +143,11 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 		ChannelSftp channelSftp = setupJsch(port, host, user, password, privateKeyLocation);
 		
 	    channelSftp.connect();
-	    channelSftp.put(fromFilePath, toFilePath);
+	    
+	    channelSftp.cd(".");
+	    File localFile = new File(fromFilePath);
+	    channelSftp.put(localFile.getAbsolutePath(), toFilePath);
+	    
 	    channelSftp.exit();
 	}
 	

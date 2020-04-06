@@ -23,7 +23,6 @@ import org.apache.tools.ant.types.Commandline;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -85,7 +84,7 @@ public class SftpTest {
     public void testSftpUpload() throws IOException {
     	File.createTempFile( "test", "txt");
     	
-    	testSftp("-sftpUpload /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
+    	testSftp("-sftp /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
     	
     	assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/test.txt").exists());
     }
@@ -99,7 +98,7 @@ public class SftpTest {
     	File existingFile = new File(Paths.get("tempFile.txt").toAbsolutePath().toString());
     	Files.deleteIfExists(existingFile.toPath());
     	
-    	testSftp("-sftpUpload /type=download /userName=username /host=localhost /port=8001 /password=password /fromFile=tempFile.txt /to=./");
+    	testSftp("-sftp /type=download /userName=username /host=localhost /port=8001 /password=password /fromFile=tempFile.txt /to=./");
     	
     	assertTrue(new File(Paths.get("tempFile.txt").toAbsolutePath().toString()).exists());
     	
