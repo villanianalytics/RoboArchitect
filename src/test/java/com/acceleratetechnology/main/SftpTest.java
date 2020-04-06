@@ -25,11 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.Assertion;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -38,11 +34,7 @@ public class SftpTest {
 
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
-	private final ExpectedSystemExit exit = ExpectedSystemExit.none();
-	
-	@Rule
-	public TestRule chain = RuleChain.outerRule(tempFolder).around(exit);
-	
+
     private static final String USERNAME = "username";
     
     private static final String PASSWORD = "password";
@@ -92,12 +84,7 @@ public class SftpTest {
     	
     	testSftp("-sftpUpload /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
     	
-    	exit.checkAssertionAfterwards(new Assertion() {
-            @Override
-            public void checkAssertion() throws Exception {
-                assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/test.txt").exists());
-            }
-        });
+    	assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/test.txt").exists());
     }
     
     @Test
@@ -113,7 +100,6 @@ public class SftpTest {
     	
     	assertTrue(new File(Paths.get("tempFile.txt").toAbsolutePath().toString()).exists());
     	
-    	// check if file exists 
     	File deleteAfter = new File(Paths.get("tempFile.txt").toAbsolutePath().toString());
     	Files.deleteIfExists(deleteAfter.toPath());
     }
