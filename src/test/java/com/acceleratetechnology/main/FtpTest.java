@@ -61,16 +61,15 @@ public class FtpTest {
 	public void testFtp() throws IOException {
 		File file = File.createTempFile("testUpload2", ".txt");
 
-		testSftp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=8888 /password=joe123 /fromFile="
-				+ file.getAbsolutePath() + " /to=./");
+		testFtp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=8888 /password=joe123 /fromFile="
+				+ file.getAbsolutePath() + " /to=" + file.getName());
 
 		assertTrue(fileSystem.exists("c:\\" + file.getName()));
 		
 		File existingFile = new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString());
 		Files.deleteIfExists(existingFile.toPath());
 
-		testSftp(
-				"-ftp /type=download /userName=joe /host=localhost /port=8888 /password=joe123 /fromFile=fileDownload2.txt /to=fileDownload2.txt");
+		testFtp("-ftp /type=download /userName=joe /host=localhost /port=8888 /password=joe123 /fromFile=fileDownload2.txt /to=fileDownload2.txt");
 
 		assertTrue(new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString()).exists());
 
@@ -78,7 +77,7 @@ public class FtpTest {
 		Files.deleteIfExists(deleteAfter.toPath());
 	}
 
-	private void testSftp(String command) throws IOException {
+	private void testFtp(String command) throws IOException {
 		RAMainApplication.main(Commandline.translateCommandline(command));
 	}
 }

@@ -44,9 +44,6 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	/** The Constant PASSWORD. */
 	private static final String PASSWORD = "/password";
 
-	/** The Constant PRIVATE_KEY. */
-	private static final String PRIVATE_KEY = "/privateKey";
-
 	/** The Constant FROM_FILE. */
 	private static final String FROM_FILE = "/fromFile";
 
@@ -77,24 +74,23 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "21"));
 		String password = getDefaultAttribute(PASSWORD, "");
-		String privateKeyLocation = getDefaultAttribute(PRIVATE_KEY, "");
 		String fromFile = getDefaultAttribute(FROM_FILE, "");
-		String toFile = getDefaultAttribute(TO_FILE, "./");
+		String toFile = getDefaultAttribute(TO_FILE, "");
 		String type = getRequiredAttribute(TYPE);
 
 		if (StringUtils.isEmpty(type))
 			throw new MissedParameterException("A ftp type needs to be provided.");
 
 		logger.info(String.format(
-				"Parameters: type %s, host %s, port %s, password %s, privateKeyLocation %s, fromFile %s, toFile %s",
-				type, host, String.valueOf(port), password, privateKeyLocation, fromFile, toFile));
+				"Parameters: type %s, host %s, port %s, password %s, fromFile %s, toFile %s",
+				type, host, String.valueOf(port), password, fromFile, toFile));
 
 		if (DOWNLOAD.equalsIgnoreCase(type)) {
-			ftpDownload(host, port, user, password, privateKeyLocation, fromFile, toFile);
+			ftpDownload(host, port, user, password, fromFile, toFile);
 		}
 
 		if (UPLOAD.contentEquals(type)) {
-			ftpUpload(host, port, user, password, privateKeyLocation, fromFile, toFile);
+			ftpUpload(host, port, user, password, fromFile, toFile);
 		}
 
 		logger.info("Ftp command finished");
@@ -111,7 +107,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	 * @param fromFilePath the from file path
 	 * @param toFilePath the to file path
 	 */
-	private void ftpUpload(String host, int port, String user, String password, String privateKeyLocation,
+	private void ftpUpload(String host, int port, String user, String password,
 			String fromFilePath, String toFilePath){
 		FTPClient ftpClient = new FTPClient();
 		try {
@@ -123,7 +119,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 			File file = new File(fromFilePath);
 			InputStream inputStream = new FileInputStream(file);
 			logger.info("Uploading File");
-			boolean done = ftpClient.storeFile(file.getName(), inputStream);
+			boolean done = ftpClient.storeFile(toFilePath, inputStream);
 			inputStream.close();
 			logger.info("Upload Completed : " + done);
 
@@ -152,7 +148,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	 * @param fromFilePath the from file path
 	 * @param toFilePath the to file path
 	 */
-	private void ftpDownload(String host, int port, String user, String password, String privateKeyLocation,
+	private void ftpDownload(String host, int port, String user, String password,
 			String fromFilePath, String toFilePath) {
 		FTPClient ftpClient = new FTPClient();
 		try {
