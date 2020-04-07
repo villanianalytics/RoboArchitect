@@ -1,27 +1,7 @@
 package com.acceleratetechnology.controller;
 
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import com.google.gson.*;
-import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,7 +10,42 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+
+import com.acceleratetechnology.controller.exceptions.MissedParameterException;
+import com.github.villanianalytics.unsql.UnSql;
+import com.github.villanianalytics.unsql.UnSql.EXPORT_FORMAT;
+import com.github.villanianalytics.unsql.exception.UnSqlException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.jayway.jsonpath.JsonPath;
 
 /**
  * Connect to any web service by using http response and get a result from there.
@@ -117,10 +132,39 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     public static final String JSON_PATH_PARAM = "/jsonPath";
     /**
+     * Unsql filter attribute.
+     */
+    public static final String UNSQL_PATH_PARAM = "/query";
+    /**
      * Destination xlsx file command line parameter.
      */
     public static final String DEST_FILE_PARAM = "/destFile";
+    
+    /** The Constant DELIMITER. */
+    public static final String DELIMITER ="/delimiter";
+    
+    /** The Constant HEADERS. */
+    public static final String HEADERS ="/headers";
+    
+    /** The delimiter value. */
+    private String delimiterValue = ",";
 
+	/** The headers flag. */
+	private boolean headersFlag = false;
+
+	
+	private static final String XML_FILE = ".xml";
+	private static final String JSON_FILE = ".json";
+	private static final String TEXT_FILE = ".txt";
+	
+	
+    /**
+     * Instantiates a new connect command.
+     *
+     * @param args the args
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws MissedParameterException the missed parameter exception
+     */
     @Command("-connect")
     public ConnectCommand(String[] args) throws IOException, MissedParameterException {
         super(args);
@@ -128,6 +172,17 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
                 "org.apache.commons.logging.impl.NoOpLog");
     }
 
+    /**
+     * Execute.
+     *
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws MissedParameterException the missed parameter exception
+     * @throws IllegalBlockSizeException the illegal block size exception
+     * @throws NoSuchPaddingException the no such padding exception
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     * @throws InvalidKeyException the invalid key exception
+     * @throws BadPaddingException the bad padding exception
+     */
     @Override
     public void execute() throws IOException, MissedParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException {
         String url = getAttribute(URL_PARAMETER);
@@ -175,10 +230,33 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         String jsonPath = getAttribute(JSON_PATH_PARAM);
         if (jsonPath != null && !jsonPath.isEmpty()) {
             response = jsonFilter(jsonPath, response);
-        } else {
-            logger.info(response);
         }
-
+        
+        String unSqlQuery = getAttribute(UNSQL_PATH_PARAM);
+        if (unSqlQuery != null && !unSqlQuery.isEmpty()) {
+        	String destFile = getAttribute(DEST_FILE_PARAM);
+            String delimiterAttr = getAttribute(DELIMITER);
+            String headersAttr = getAttribute(HEADERS);
+            
+            if (StringUtils.isEmpty(destFile) || !destFile.endsWith(".txt")) {
+            	if (!StringUtils.isEmpty(delimiterAttr)) logger.warn("Delimiter paramenter will be ingnore, it should only be used with .txt files");
+            	if (!StringUtils.isEmpty(headersAttr)) logger.warn("Headers paramenter will be ingnore, it should only be used with .txt files");
+            } else {
+            	if (!StringUtils.isEmpty(delimiterAttr)) setDelimiterValue(delimiterAttr);
+            	if (!StringUtils.isEmpty(headersAttr)) setHeadersFlag(true);
+            }
+            
+            if (unSqlQuery.endsWith(".txt")) {
+            	unSqlQuery = readQueryFile(unSqlQuery);
+            }
+            
+            response = unSqlFilter(unSqlQuery, response, destFile);
+        }
+        
+        if (StringUtils.isEmpty(jsonPath) && StringUtils.isEmpty(unSqlQuery)) {
+        	logger.info(response);
+        }
+        
         String jsonFile = getAttribute(DEST_FILE_PARAM);
         if (jsonFile != null && !jsonFile.isEmpty()) {
             Path jsonDir = Paths.get(jsonFile);
@@ -193,14 +271,17 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     /**
      * Send request with credentials and get a response. Then writes this response to a file.
      *
-     * @param sourceFile       File.
      * @param user             Username.
      * @param pw               Password.
+     * @param token the token
      * @param url              URL.
      * @param restMethod       Method.
-     * @param connectionMethod Connection method.
+     * @param sourceFile       File.
      * @param body             body message.
+     * @param connectionMethod Connection method.
      * @return full JSON response.
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws MissedParameterException the missed parameter exception
      */
     private String getJSONResponse(String user, String pw, String token, String url, HttpMethod restMethod, File sourceFile, String body, String connectionMethod) throws IOException, MissedParameterException {
         System.setProperty(HTTPS_PROTOCOLS, TLSV_1_2);
@@ -315,6 +396,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @param connectionMethod Connection method.
      * @param encoding         Encoded username and password, or token.
      * @param client           Client info.
+     * @param builder the builder
      * @return Web server response
      * @throws IOException throws if input or output exception was.
      */
@@ -379,6 +461,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @param connectionMethod Connection method.
      * @param encoding         Encoded username and password, or token.
      * @param client           Client info.
+     * @param builder the builder
      * @return Web server response
      * @throws IOException throws if input or output exception was.
      */
@@ -455,8 +538,109 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         logger.info(formattedMessage);
         return formattedMessage;
     }
+    
+    /**
+     * Return filtered json by sql query.
+     *
+     * @param query the query
+     * @param json     JSON text.
+     * @param destFile the dest file
+     * @return Filtered Json.
+     * @throws MissedParameterException the missed parameter exception
+     */
+    public String unSqlFilter(String query, String json, String destFile) throws MissedParameterException {
+    	String results = "";
+       
+    	try {
+        	if (destFile != null && destFile.endsWith(XML_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.XML)
+        				.execute(query);
+        		
+        	} else  if (destFile != null && destFile.endsWith(JSON_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.JSON)
+        				.execute(query);
+        		
+        	} else  if (destFile != null && destFile.endsWith(TEXT_FILE)) {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.VALUES)
+        				.withRowDelimiter(delimiterValue)
+        				.withHeaders(headersFlag)
+        				.execute(query);
+        		
+        	} else {
+        		results = new UnSql(json)
+        				.withExportFormat(EXPORT_FORMAT.VALUES)
+        				.withRowDelimiter(delimiterValue)
+        				.withHeaders(headersFlag)
+        				.execute(query);
+        	}
+  		} catch (UnSqlException e) {
+			throw new MissedParameterException(e.getMessage());
+		}
+        
+        logger.info(results);
+        return results;
+    }
+    
+    private String readQueryFile(String filePath) throws IOException {
+    	String query = FileUtils.readFileToString(Paths.get(filePath).toFile(), UTF_8);
+    	
+    	return query.replaceAll("\\r|\\n", "");
+    }
 
-    private enum HttpMethod {
-        GET, HEAD, POST, PUT, PATCH, DELETE;
+    /**
+     * Checks if is headers flag.
+     *
+     * @return true, if is headers flag
+     */
+    public boolean isHeadersFlag() {
+		return headersFlag;
+	}
+
+	/**
+	 * Sets the headers flag.
+	 *
+	 * @param headersFlag the new headers flag
+	 */
+	public void setHeadersFlag(boolean headersFlag) {
+		this.headersFlag = headersFlag;
+	}
+
+	/**
+	 * Gets the delimiter value.
+	 *
+	 * @return the delimiter value
+	 */
+	public String getDelimiterValue() {
+		return delimiterValue;
+	}
+
+	/**
+	 * Sets the delimiter value.
+	 *
+	 * @param delimiterValue the new delimiter value
+	 */
+	public void setDelimiterValue(String delimiterValue) {
+		this.delimiterValue = delimiterValue;
+	}
+
+	/**
+	 * The Enum HttpMethod.
+	 */
+	private enum HttpMethod {
+         /** The get. */
+	     GET, 
+		 /** The head. */
+		 HEAD, 
+		 /** The post. */
+		 POST, 
+		 /** The put. */
+		 PUT, 
+		 /** The patch. */
+		 PATCH, 
+		 /** The delete. */
+		 DELETE;
     }
 }

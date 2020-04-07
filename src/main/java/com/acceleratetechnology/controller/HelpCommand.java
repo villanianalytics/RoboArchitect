@@ -35,6 +35,13 @@ public class HelpCommand extends AbstractCommand {
                                          "\t[/srcFile=\"CSV_FILE\"] [/table=\"TABLE_NAME\"] [/delim=\"DELIMITER\"] [/mode=\"OVERWRITE or APPEND\"]\n" +
                                          "\t[/query=\"SQL_QUERY\"] [/return=\"Y or N\"] [/destFile=\"FILE\"] [/header=\"Y or N\"] [/log=\"LOG_FILE\"]\n" +
                                          "\t";
+    
+    private static final String UNSQL = "-unsql                 Do SQL in json and xml files\n\n\t" +
+    									"/srcFile/=\"Source file in json or xml format\"\n" +
+    									"/destFile/=\"Destination file in json, xml or text format\"\n" +
+    									"/query/=\"SQL query\"\n" +
+    									"[/delimiter=\"delimiter character\"] [/headers=\"Y or N\"] [/log=\"LOG_FILE\"] \n" +
+    									"\t";
     /**
      * System logger.
      */
@@ -56,5 +63,6 @@ public class HelpCommand extends AbstractCommand {
         logger.info(EMAIL);
         logger.info(QUERY_DELIM);
         logger.info(SQL);
+        logger.info(UNSQL);
     }
 }
