@@ -47,7 +47,7 @@ public class FtpTest {
 		fakeFtpServer.setServerControlPort(8888);
 		fileSystem = new WindowsFakeFileSystem();
 		fileSystem.add(new DirectoryEntry("c:\\"));
-		fileSystem.add(new FileEntry("c:\\fileDownload.txt", "abcdef 1234567890"));
+		fileSystem.add(new FileEntry("c:\\fileDownload2.txt", "abcdef 1234567890"));
 		fakeFtpServer.setFileSystem(fileSystem);
 
 		UserAccount userAccount = new UserAccount("joe", "joe123", "c:\\");
@@ -64,7 +64,7 @@ public class FtpTest {
 
 	@Test
 	public void testFtpUpload() throws IOException {
-		File file = File.createTempFile("testUpload", ".txt");
+		File file = File.createTempFile("testUpload2", ".txt");
 
 		testSftp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=8888 /password=joe123 /fromFile="
 				+ file.getAbsolutePath() + " /to=./");
@@ -75,15 +75,15 @@ public class FtpTest {
 	@Test
 	public void testFtpDownload() throws IOException {
 		// check if file exists
-		File existingFile = new File(Paths.get("fileDownload.txt").toAbsolutePath().toString());
+		File existingFile = new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString());
 		Files.deleteIfExists(existingFile.toPath());
 
 		testSftp(
-				"-ftp /type=download /userName=joe /host=localhost /port=8888 /password=joe123 /fromFile=fileDownload.txt /to=fileDownload.txt");
+				"-ftp /type=download /userName=joe /host=localhost /port=8888 /password=joe123 /fromFile=fileDownload2.txt /to=fileDownload2.txt");
 
-		assertTrue(new File(Paths.get("fileDownload.txt").toAbsolutePath().toString()).exists());
+		assertTrue(new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString()).exists());
 
-		File deleteAfter = new File(Paths.get("fileDownload.txt").toAbsolutePath().toString());
+		File deleteAfter = new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString());
 		Files.deleteIfExists(deleteAfter.toPath());
 	}
 
