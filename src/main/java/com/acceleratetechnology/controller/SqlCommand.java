@@ -253,6 +253,19 @@ public class SqlCommand extends AbstractCommand {
             }
 
         }
+        else if (jdbcConnection.startsWith("jdbc:mysql"))
+        {
+            @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+            String sql = "create database if not exists "+dbName;
+            logger.debug(sql);
+            try (Statement statement = c.createStatement()) {
+                statement.executeUpdate(sql);
+                System.out.println("Done.");
+            } catch (Exception e) {
+                logger.error(e);
+            }
+
+        }
         else
         {
             @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
@@ -378,6 +391,11 @@ public class SqlCommand extends AbstractCommand {
             c = driver.connect(jdbcConnection,null);
             dataType=VARCHAR_SQLSERVER;
         }
+        else if(jdbcConnection.startsWith("jdbc:mysql"))
+        {
+            c = DriverManager.getConnection(jdbcConnection);
+            dataType=VARCHAR_SQLSERVER;
+        }
         else
         {
             c = DriverManager.getConnection(jdbcConnection);
@@ -403,6 +421,7 @@ public class SqlCommand extends AbstractCommand {
             if (!jdbcString.startsWith("jdbc:oracle:"))
             {
                 executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
+                logger.debug("Drop Table if exists " + tableName);
             }
             else
             {
@@ -427,7 +446,15 @@ public class SqlCommand extends AbstractCommand {
                 }
 
             }
-            executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
+            if (jdbcConnection.startsWith("jdbc:mysql"))
+            {
+                executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate.toString().replace("\"","") + ")", false, null, false);
+            }
+            else
+            {
+                executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
+            }
+
             logger.debug("Create table " + tableName + " (" + tableCreate + ")");
         }
 
