@@ -13,6 +13,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashMap;
+import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import static com.opencsv.CSVWriter.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -110,6 +111,11 @@ public class SqlCommand extends AbstractCommand {
      * String data type. Need to indicate Strings in Database.
      */
     private static final String VARCHAR_2_255 = " VARCHAR2(255)";
+
+    /**
+     * String data type. Need to indicate Strings in Database.
+     */
+    private static final String VARCHAR_SQLSERVER = " VARCHAR(4000)";
     /**
      * Double quotes need to surround data from csv file.
      */
@@ -145,16 +151,21 @@ public class SqlCommand extends AbstractCommand {
         String opCmd = getRequiredAttribute(OP_PARAMETER);
         String opDB = getRequiredAttribute(DB_NAME_PARAMETER);
 
-
-        Class.forName(JDBC.class.getCanonicalName());
-        File db = Paths.get(opDB).toAbsolutePath().toFile();
-        logger.debug("File path is created: " + db.getParentFile().mkdirs());
-        opDB = db.getCanonicalPath();
-
         String dbConnection = getDefaultAttribute(CONN_PARAMETER,DEFAULT_CONN);
+
         if (dbConnection.equalsIgnoreCase("sqlite"))
         {
+            File db = Paths.get(opDB).toAbsolutePath().toFile();
+            logger.debug("File path is created: " + db.getParentFile().mkdirs());
+            opDB = db.getCanonicalPath();
             jdbcString= JDBC_SQLITE + opDB;
+            Class.forName(JDBC.class.getCanonicalName());
+
+        }
+        else
+        {
+            jdbcString=dbConnection;
+
         }
 
 
@@ -217,8 +228,37 @@ public class SqlCommand extends AbstractCommand {
      * @throws SQLException throws when database access error or other errors.
      */
     public void createDB(String jdbcConnection,String dbName) throws SQLException {
-        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
         logger.debug("Creating database " + dbName);
+        if (jdbcConnection.startsWith("jdbc:sqlserver:")) {
+            SQLServerDriver driver = new SQLServerDriver();
+           @Cleanup Connection c = driver.connect(jdbcConnection,null);
+            String sql = "DROP DATABASE IF EXISTS [" + dbName + "]; CREATE DATABASE [" + dbName + "]";
+            try (Statement statement = c.createStatement()) {
+                statement.executeUpdate(sql);
+                System.out.println("Done.");
+            } catch (Exception e) {
+                logger.error(e);
+            }
+        }
+        else if (jdbcConnection.startsWith("jdbc:oracle:"))
+        {
+            @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+            String sql = "create user "+dbName + " identified by "+ dbName;
+            logger.debug(sql);
+            try (Statement statement = c.createStatement()) {
+                statement.executeUpdate(sql);
+                System.out.println("Done.");
+            } catch (Exception e) {
+                logger.error(e);
+            }
+
+        }
+        else
+        {
+            @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+        }
+
+
         logger.info("Successfully created database");
     }
 
@@ -234,7 +274,18 @@ public class SqlCommand extends AbstractCommand {
      * @throws IOException  thrown in case of an I/O error.
      */
     public void executeQuery(String jdbcConnection, String dbName, String query, boolean returnFlag, HashMap<String, String> outFile, boolean header) throws SQLException, IOException {
-        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+        //@Cleanup Connection c;
+        Connection c;
+        if (jdbcConnection.startsWith("jdbc:sqlserver:"))
+        {
+            SQLServerDriver driver = new SQLServerDriver();
+            c = driver.connect(jdbcConnection,null);
+        }
+        else
+        {
+            c = DriverManager.getConnection(jdbcConnection);
+        }
+
         c.setAutoCommit(false);
         logger.debug("Opened database successfully");
         @Cleanup Statement stmt = c.createStatement();
@@ -304,6 +355,7 @@ public class SqlCommand extends AbstractCommand {
                 logger.info(stream);
             }
         }
+        c.close();
     }
 
     /**
@@ -318,7 +370,19 @@ public class SqlCommand extends AbstractCommand {
      * @throws IOException  thrown in case of an I/O error
      */
     public void importTable(String jdbcConnection,String dbName, String tableName, String fileName, char delim, String updateMode) throws SQLException, IOException {
-        @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+        String dataType;
+        Connection c;
+        if (jdbcConnection.startsWith("jdbc:sqlserver:"))
+        {
+            SQLServerDriver driver = new SQLServerDriver();
+            c = driver.connect(jdbcConnection,null);
+            dataType=VARCHAR_SQLSERVER;
+        }
+        else
+        {
+            c = DriverManager.getConnection(jdbcConnection);
+            dataType=VARCHAR_2_255;
+        }
         c.setAutoCommit(false);
         logger.debug("Opened database successfully");
 
@@ -336,25 +400,41 @@ public class SqlCommand extends AbstractCommand {
 
         String[] nextRecord;
         if (updateMode.equalsIgnoreCase(OVERWRITE)) {
-            executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
+            if (!jdbcString.startsWith("jdbc:oracle:"))
+            {
+                executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
+            }
+            else
+            {
+                executeQuery(jdbcString, dbName, "BEGIN\n" +
+                        "         EXECUTE IMMEDIATE 'DROP TABLE "+ tableName+"';\n" +
+                        "    EXCEPTION\n" +
+                        "         WHEN OTHERS THEN\n" +
+                        "                IF SQLCODE != -942 THEN\n" +
+                        "                     RAISE;\n" +
+                        "                END IF;\n" +
+                        "    END; ", false, null, false);
+            }
+
 
             //create table  based on file
             //Logic to create table based on # of columns with header as column names
             StringBuilder tableCreate = new StringBuilder();
             for (int i = 0; i < columnCount; i++) {
-                tableCreate.append(DOUBLE_QUOTES).append(header[i]).append(DOUBLE_QUOTES).append(VARCHAR_2_255);
+                tableCreate.append(DOUBLE_QUOTES).append(header[i]).append(DOUBLE_QUOTES).append(dataType);
                 if (i != (columnCount - 1)) {
                     tableCreate.append(DEFAULT_DELIM);
                 }
 
             }
             executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate + ")", false, null, false);
+            logger.debug("Create table " + tableName + " (" + tableCreate + ")");
         }
 
 
         while ((nextRecord = csvReader.readNext()) != null) {
             @Cleanup Statement stmt = c.createStatement();
-            String sql = "INSERT INTO " + tableName + " VALUES (" + "'" + String.join("','", nextRecord) + "'" + ");";
+            String sql = "INSERT INTO " + tableName + " VALUES (" + "'" + String.join("','", nextRecord) + "'" + ")";
             logger.debug(sql);
             stmt.executeUpdate(sql);
 
@@ -365,5 +445,6 @@ public class SqlCommand extends AbstractCommand {
 
         c.commit();
         logger.info("Statement Committed");
+        c.close();
     }
 }
