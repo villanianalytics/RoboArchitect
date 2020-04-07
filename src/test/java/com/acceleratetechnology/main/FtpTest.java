@@ -44,7 +44,8 @@ public class FtpTest {
 		Security.addProvider(new BouncyCastleProvider());
 
 		FakeFtpServer fakeFtpServer = new FakeFtpServer();
-
+		fakeFtpServer.setServerControlPort(8888);
+		
 		fileSystem = new WindowsFakeFileSystem();
 		fileSystem.add(new DirectoryEntry("c:\\"));
 		fileSystem.add(new FileEntry("c:\\fileDownload.txt", "abcdef 1234567890"));
@@ -69,7 +70,7 @@ public class FtpTest {
 	public void testFtpUpload() throws IOException {
 		File file = File.createTempFile("testUpload", ".txt");
 
-		testSftp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=21 /password=joe123 /fromFile="
+		testSftp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=8888 /password=joe123 /fromFile="
 				+ file.getAbsolutePath() + " /to=./");
 
 		assertTrue(fileSystem.exists("c:\\" + file.getName()));
@@ -82,7 +83,7 @@ public class FtpTest {
 		Files.deleteIfExists(existingFile.toPath());
 
 		testSftp(
-				"-ftp /type=download /userName=joe /host=localhost /port=21 /password=joe123 /fromFile=fileDownload.txt /to=fileDownload.txt");
+				"-ftp /type=download /userName=joe /host=localhost /port=8888 /password=joe123 /fromFile=fileDownload.txt /to=fileDownload.txt");
 
 		assertTrue(new File(Paths.get("fileDownload.txt").toAbsolutePath().toString()).exists());
 
