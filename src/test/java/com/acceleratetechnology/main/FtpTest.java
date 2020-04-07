@@ -6,10 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Security;
 
 import org.apache.tools.ant.types.Commandline;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +39,6 @@ public class FtpTest {
 	}
 
 	private void setupServer() throws IOException {
-		Security.addProvider(new BouncyCastleProvider());
-
 		fakeFtpServer = new FakeFtpServer();
 		fakeFtpServer.setServerControlPort(8888);
 		fileSystem = new WindowsFakeFileSystem();
@@ -59,22 +55,17 @@ public class FtpTest {
 	@After
 	public void cleanup() throws InterruptedException {
 		fakeFtpServer.stop();
-		tempFolder.delete();
 	}
 
 	@Test
-	public void testFtpUpload() throws IOException {
+	public void testFtp() throws IOException {
 		File file = File.createTempFile("testUpload2", ".txt");
 
 		testSftp("-ftp /type=upload /userName=joe /host=127.0.0.1 /port=8888 /password=joe123 /fromFile="
 				+ file.getAbsolutePath() + " /to=./");
 
 		assertTrue(fileSystem.exists("c:\\" + file.getName()));
-	}
-
-	@Test
-	public void testFtpDownload() throws IOException {
-		// check if file exists
+		
 		File existingFile = new File(Paths.get("fileDownload2.txt").toAbsolutePath().toString());
 		Files.deleteIfExists(existingFile.toPath());
 
