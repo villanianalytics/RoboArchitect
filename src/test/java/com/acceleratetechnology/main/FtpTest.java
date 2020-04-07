@@ -29,7 +29,7 @@ public class FtpTest {
 	private FakeFtpServer fakeFtpServer;
 
 	private TemporaryFolder tempFolder;
-	
+
 	private FileSystem fileSystem;
 
 	@Before
@@ -43,14 +43,13 @@ public class FtpTest {
 	private void setupServer() throws IOException {
 		Security.addProvider(new BouncyCastleProvider());
 
-		FakeFtpServer fakeFtpServer = new FakeFtpServer();
+		fakeFtpServer = new FakeFtpServer();
 		fakeFtpServer.setServerControlPort(8888);
-		
 		fileSystem = new WindowsFakeFileSystem();
 		fileSystem.add(new DirectoryEntry("c:\\"));
 		fileSystem.add(new FileEntry("c:\\fileDownload.txt", "abcdef 1234567890"));
 		fakeFtpServer.setFileSystem(fileSystem);
-		
+
 		UserAccount userAccount = new UserAccount("joe", "joe123", "c:\\");
 		fakeFtpServer.addUserAccount(userAccount);
 
@@ -59,11 +58,8 @@ public class FtpTest {
 
 	@After
 	public void cleanup() throws InterruptedException {
-		try {
-			fakeFtpServer.stop();
-			tempFolder.delete();
-		} catch (Exception e) {
-		}
+		fakeFtpServer.stop();
+		tempFolder.delete();
 	}
 
 	@Test
