@@ -74,23 +74,23 @@ public class SftpTest {
     
     @After
     public void cleanup() throws InterruptedException {
-    	tempFolder.delete();
         try {
-            sshd.stop(true);
+        	sshd.stop(true);
+        	tempFolder.delete();
         } catch (Exception e) {
         }
     }
     
     @Test
     public void testSftpUpload() throws IOException {
-    	File.createTempFile( "test", "txt");
+    	File file = File.createTempFile( "testUpload", ".txt");
     	
-    	testSftp("-sftp /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile=test.txt /to=./");
+    	testSftp("-sftp /type=upload /userName=username /host=localhost /port=8001 /password=password /fromFile="+file.getAbsolutePath()+" /to=./");
     	
-    	assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/test.txt").exists());
+    	assertTrue(new File(tempFolder.getRoot().getAbsolutePath() + "/" + file.getName()).exists());
     }
     
-    //@Test
+    @Test
     public void testSftpDownload() throws IOException {
     	final File tempFile = tempFolder.newFile("tempFile.txt");
     	FileUtils.writeStringToFile(tempFile, "hello world", Charset.defaultCharset(), true);
