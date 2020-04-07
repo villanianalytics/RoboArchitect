@@ -23,6 +23,7 @@ import org.apache.tools.ant.types.Commandline;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -80,7 +81,7 @@ public class SftpTest {
         }
     }
     
-   // @Test
+    @Test
     public void testSftpUpload() throws IOException {
     	File.createTempFile( "test", "txt");
     	
