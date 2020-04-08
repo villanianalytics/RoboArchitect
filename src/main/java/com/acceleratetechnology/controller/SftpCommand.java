@@ -72,7 +72,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 		String user = getDefaultAttribute(USER_NAME, "");
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "22"));
-		String password = getPassword();
+		String password = getPassword("");
 		String privateKeyLocation = getDefaultAttribute(PRIVATE_KEY, "");
 		String fromFile = getDefaultAttribute(FROM_FILE, "");
 		String toFile = getDefaultAttribute(TO_FILE, "./");
