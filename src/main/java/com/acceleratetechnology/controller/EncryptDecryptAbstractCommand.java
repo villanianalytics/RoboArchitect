@@ -23,6 +23,7 @@ import java.util.Base64;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+// TODO: Auto-generated Javadoc
 /**
  * Encrypt and decrypt password by using AES algorithm.
  */
@@ -33,6 +34,12 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
     private final Logger logger = Logger.getLogger(EncryptDecryptAbstractCommand.class);
     /**
      * Secret key. Some random bytes encryption by default, otherwise specify as a command parameter.
+     */
+    
+    /**
+     * Sets the secret bytes.
+     *
+     * @param SECRET_BYTES the new secret bytes
      */
     @Setter private static byte[] SECRET_BYTES = {12, 54, 12, 1, 23, 42, 66, 102, 1, 10, 66, 122};
     /**
@@ -56,10 +63,21 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      */
     private static final String USER_PASSWORD_PARAMETER = "password";
     /**
+     * Password field in connect as a parameter.
+     */
+    private static final String USER_PASSWORD = "/password";
+    /**
      * Password file attribute.
      */
     private static final String PASSWORD_FILE_PARAM = "/passwordFile";
 
+    /**
+     * Instantiates a new encrypt decrypt abstract command.
+     *
+     * @param args the args
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws MissedParameterException the missed parameter exception
+     */
     public EncryptDecryptAbstractCommand(String[] args) throws IOException, MissedParameterException {
         super(args);
     }
@@ -125,16 +143,17 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
     /**
      * Decrypt user password from a file.
      *
+     * @param passwordFile the password file
      * @return Return encrypted password.
-     * @throws InvalidKeyException       thrown if {@link #secretKey} is invalid (invalid encoding, wrong length, uninitialized, etc).
-     * @throws NoSuchPaddingException    thrown if transformation contains a padding scheme that is not available.
-     * @throws NoSuchAlgorithmException  thrown if transformation is null, empty, in an invalid format, or if no Provider supports a CipherSpi implementation for the specified algorithm.
-     * @throws IOException               thrown in case of an I/O error
      * @throws BadPaddingException       thrown if this cipher is in decryption mode, and (un)padding has been requested,
      *                                   but the decrypted data is not bounded by the appropriate padding bytes.
      * @throws IllegalBlockSizeException thrown if this cipher is a block cipher, no padding has been requested (only in encryption mode),
      *                                   and the total input length of the data processed by this cipher is not a multiple of block size;
      *                                   or if this encryption algorithm is unable to process the input data provided.
+     * @throws NoSuchPaddingException    thrown if transformation contains a padding scheme that is not available.
+     * @throws NoSuchAlgorithmException  thrown if transformation is null, empty, in an invalid format, or if no Provider supports a CipherSpi implementation for the specified algorithm.
+     * @throws InvalidKeyException       thrown if {@link #secretKey} is invalid (invalid encoding, wrong length, uninitialized, etc).
+     * @throws IOException               thrown in case of an I/O error
      */
     public String decrypt(File passwordFile) throws BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         logger.debug("Read password from a file.");
@@ -152,15 +171,15 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      *
      * @return password.
      * @throws MissedParameterException  Throws if expected command is wrong or missed.
-     * @throws InvalidKeyException       thrown if it is impossible or unsafe to wrap the key with this cipher (e.g., a hardware protected key is being passed to a software-only cipher).
-     * @throws NoSuchPaddingException    thrown if transformation contains a padding scheme that is not available.
-     * @throws NoSuchAlgorithmException  thrown if transformation is null, empty, in an invalid format, or if no Provider supports a CipherSpi implementation for the specified algorithm.
-     * @throws IOException               thrown in case of an I/O error
      * @throws BadPaddingException       thrown if this cipher is in decryption mode, and (un)padding has been requested,
      *                                   but the decrypted data is not bounded by the appropriate padding bytes.
+     * @throws NoSuchAlgorithmException  thrown if transformation is null, empty, in an invalid format, or if no Provider supports a CipherSpi implementation for the specified algorithm.
      * @throws IllegalBlockSizeException thrown if this cipher is a block cipher, no padding has been requested (only in encryption mode),
      *                                   and the total input length of the data processed by this cipher is not a multiple of block size;
      *                                   or if this encryption algorithm is unable to process the input data provided.
+     * @throws NoSuchPaddingException    thrown if transformation contains a padding scheme that is not available.
+     * @throws InvalidKeyException       thrown if it is impossible or unsafe to wrap the key with this cipher (e.g., a hardware protected key is being passed to a software-only cipher).
+     * @throws IOException               thrown in case of an I/O error
      */
     public String getPassword() throws MissedParameterException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, IOException {
         String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
@@ -182,5 +201,36 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
             throw new MissedParameterException("Sorry, but firstly you must enter your password.");
         }
         return password;
+    }
+    
+    /**
+     * Gets the password from file or from parameter
+     *
+     * @param defaultValue the default value
+     * @return the password
+     * @throws BadPaddingException the bad padding exception
+     * @throws NoSuchAlgorithmException the no such algorithm exception
+     * @throws IllegalBlockSizeException the illegal block size exception
+     * @throws NoSuchPaddingException the no such padding exception
+     * @throws InvalidKeyException the invalid key exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public String getPassword(String defaultValue) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, IOException {
+        String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
+
+        String password;
+        if (passwordFile == null) {
+            logger.debug("Get user password from parameters.");
+            password = getAttribute(USER_PASSWORD);
+            logger.debug("Done.");
+        } else {
+            File pswdFile = Paths.get(passwordFile).toFile();
+            // If you want to change basic secret key, please uncomment the line below.
+            // setSECRET_BYTES("SecretKey".getBytes(UTF_8));
+            password = decrypt(pswdFile);
+            logger.debug("Decrypted.");
+        }
+
+        return password == null || password.isEmpty() ? defaultValue : password;
     }
 }

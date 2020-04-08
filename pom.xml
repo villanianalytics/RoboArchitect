@@ -498,6 +498,49 @@
 			<version>0.0.9</version>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.55</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-core</artifactId>
+			<version>2.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-sftp</artifactId>
+			<version>2.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>1.58</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.ftpserver/ftpserver-core -->
+		<dependency>
+			<groupId>org.mockftpserver</groupId>
+		    <artifactId>MockFtpServer</artifactId>
+		    <version>2.7.1</version>
+		    <scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.eclipsesource.minimal-json</groupId>
 			<artifactId>minimal-json</artifactId>
