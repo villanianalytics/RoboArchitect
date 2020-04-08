@@ -41,9 +41,6 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	/** The Constant PORT. */
 	private static final String PORT = "/port";
 
-	/** The Constant PASSWORD. */
-	private static final String PASSWORD = "/password";
-
 	/** The Constant FROM_FILE. */
 	private static final String FROM_FILE = "/fromFile";
 
@@ -73,7 +70,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 		String user = getDefaultAttribute(USER_NAME, "");
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "21"));
-		String password = getDefaultAttribute(PASSWORD, "");
+		String password = getPassword();
 		String fromFile = getDefaultAttribute(FROM_FILE, "");
 		String toFile = getDefaultAttribute(TO_FILE, "");
 		String type = getRequiredAttribute(TYPE);

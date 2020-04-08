@@ -40,9 +40,6 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	/** The Constant PORT. */
 	private static final String PORT = "/port";
 	
-	/** The Constant PASSWORD. */
-	private static final String PASSWORD = "/password";
-	
 	/** The Constant PRIVATE_KEY. */
 	private static final String PRIVATE_KEY = "/privateKey";
 	
@@ -75,7 +72,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 		String user = getDefaultAttribute(USER_NAME, "");
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "22"));
-		String password = getDefaultAttribute(PASSWORD, "");
+		String password = getPassword();
 		String privateKeyLocation = getDefaultAttribute(PRIVATE_KEY, "");
 		String fromFile = getDefaultAttribute(FROM_FILE, "");
 		String toFile = getDefaultAttribute(TO_FILE, "./");
@@ -161,7 +158,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @param privateKeyLocation the private key location
 	 * @param fromFilePath the from file path
 	 * @param toFilePath the to file path
-	 * @throws JSchException the j sch exception
+	 * @throws JSchException the jsch exception
 	 * @throws SftpException the sftp exception
 	 */
 	private void sftpDownload(String host, int port, String user, String password, String privateKeyLocation,
