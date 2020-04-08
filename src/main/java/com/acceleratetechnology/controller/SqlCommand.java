@@ -115,7 +115,7 @@ public class SqlCommand extends AbstractCommand {
     /**
      * String data type. Need to indicate Strings in Database.
      */
-    private static final String VARCHAR_SQLSERVER = " VARCHAR(4000)";
+    private static final String VARCHAR_SQLSERVER = " VARCHAR(255)";
     /**
      * Double quotes need to surround data from csv file.
      */
@@ -266,6 +266,18 @@ public class SqlCommand extends AbstractCommand {
             }
 
         }
+        else if (jdbcConnection.startsWith("jdbc:postgresql:"))
+        {
+            @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
+            String sql = "create database "+dbName;
+            logger.debug(sql);
+            try (Statement statement = c.createStatement()) {
+                statement.executeUpdate(sql);
+                System.out.println("Done.");
+            } catch (Exception e) {
+                logger.error(e);
+            }
+        }
         else
         {
             @Cleanup Connection c = DriverManager.getConnection(jdbcConnection);
@@ -391,7 +403,7 @@ public class SqlCommand extends AbstractCommand {
             c = driver.connect(jdbcConnection,null);
             dataType=VARCHAR_SQLSERVER;
         }
-        else if(jdbcConnection.startsWith("jdbc:mysql"))
+        else if(jdbcConnection.startsWith("jdbc:mysql")||jdbcConnection.startsWith("jdbc:postgresql:")||jdbcConnection.startsWith("jdbc:ucanaccess:"))
         {
             c = DriverManager.getConnection(jdbcConnection);
             dataType=VARCHAR_SQLSERVER;
@@ -418,12 +430,10 @@ public class SqlCommand extends AbstractCommand {
 
         String[] nextRecord;
         if (updateMode.equalsIgnoreCase(OVERWRITE)) {
-            if (!jdbcString.startsWith("jdbc:oracle:"))
-            {
-                executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
-                logger.debug("Drop Table if exists " + tableName);
-            }
-            else
+
+
+
+            if (jdbcString.startsWith("jdbc:oracle:"))
             {
                 executeQuery(jdbcString, dbName, "BEGIN\n" +
                         "         EXECUTE IMMEDIATE 'DROP TABLE "+ tableName+"';\n" +
@@ -433,6 +443,26 @@ public class SqlCommand extends AbstractCommand {
                         "                     RAISE;\n" +
                         "                END IF;\n" +
                         "    END; ", false, null, false);
+                logger.debug("BEGIN\n" +
+                        "         EXECUTE IMMEDIATE 'DROP TABLE "+ tableName+"';\n" +
+                        "    EXCEPTION\n" +
+                        "         WHEN OTHERS THEN\n" +
+                        "                IF SQLCODE != -942 THEN\n" +
+                        "                     RAISE;\n" +
+                        "                END IF;\n" +
+                        "    END; ");
+            }
+            else if (jdbcString.startsWith("jdbc:ucanaccess:"))
+            {
+                executeQuery(jdbcString, dbName, "Drop Table " + tableName, false, null, false);
+                logger.debug("Drop Table " + tableName);
+
+            }
+            else
+            {
+                executeQuery(jdbcString, dbName, "Drop Table if exists " + tableName, false, null, false);
+                logger.debug("Drop Table if exists " + tableName);
+
             }
 
 
@@ -446,7 +476,7 @@ public class SqlCommand extends AbstractCommand {
                 }
 
             }
-            if (jdbcConnection.startsWith("jdbc:mysql"))
+            if (jdbcConnection.startsWith("jdbc:mysql")||jdbcConnection.startsWith("jdbc:ucanaccess:"))
             {
                 executeQuery(jdbcString, dbName, "Create table " + tableName + " (" + tableCreate.toString().replace("\"","") + ")", false, null, false);
             }
