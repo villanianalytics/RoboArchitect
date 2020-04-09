@@ -106,7 +106,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @throws JSchException the j sch exception
 	 * @throws IOException 
 	 */
-	private ChannelSftp setupJsch(int port, String host, String username, String password, String privateKeyLocation) throws JSchException {
+	private Session setupJsch(int port, String host, String username, String password, String privateKeyLocation) throws JSchException {
 	    JSch jsch = new JSch();
 	    if (!StringUtils.isEmpty(privateKeyLocation)) {
 	    	jsch.addIdentity(privateKeyLocation);
@@ -117,9 +117,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	    config.put("StrictHostKeyChecking", "no");
 	    jschSession.setConfig(config);
 	    if (!StringUtils.isEmpty(password)) jschSession.setPassword(password);
-	    jschSession.connect();
-	    
-	    return (ChannelSftp) jschSession.openChannel("sftp");
+	    return jschSession;
 	}
 	
 	/**
@@ -137,7 +135,10 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	private void sftpUpload(String host, int port, String user, String password, String privateKeyLocation,
 			String fromFilePath, String toFilePath) throws JSchException, SftpException  {
-		ChannelSftp channelSftp = setupJsch(port, host, user, password, privateKeyLocation);
+		
+		Session jschSession = setupJsch(port, host, user, password, privateKeyLocation);
+		jschSession.connect();
+		ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
 		
 	    channelSftp.connect();
 	    
@@ -146,6 +147,8 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	    channelSftp.put(localFile.getAbsolutePath(), toFilePath);
 	    
 	    channelSftp.exit();
+	    
+	    jschSession.disconnect();
 	}
 	
 	/**
@@ -163,10 +166,15 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	private void sftpDownload(String host, int port, String user, String password, String privateKeyLocation,
 			String fromFilePath, String toFilePath) throws JSchException, SftpException  {
-		ChannelSftp channelSftp = setupJsch(port, host, user, password, privateKeyLocation);
+		Session jschSession = setupJsch(port, host, user, password, privateKeyLocation);
+		jschSession.connect();
+		
+		ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
 		
 	    channelSftp.connect();
 	    channelSftp.get(fromFilePath, toFilePath);
 	    channelSftp.exit();
+	    
+	    jschSession.disconnect();
 	}
 }
