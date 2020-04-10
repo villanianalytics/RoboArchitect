@@ -50,7 +50,7 @@ import lombok.Cleanup;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({System.class, FileUtils.class, EncryptDecryptAbstractCommand.class, HttpClientBuilder.class, ConnectCommand.class, EntityUtils.class})
-@PowerMockIgnore({"javax.crypto.*"})
+@PowerMockIgnore({"javax.crypto.*", "javax.management.*"})
 public class RAMainApplicationTest {
     static {
         System.setProperty("log.file", "logs.log");
