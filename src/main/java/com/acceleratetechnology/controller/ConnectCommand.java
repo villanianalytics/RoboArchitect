@@ -290,12 +290,14 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         HttpClient client;
         if (user != null) {
             encoding = Base64.getEncoder().encodeToString((user + ":" + pw).getBytes(UTF_8));
+            logger.debug(encoding);
             provider = new BasicCredentialsProvider();
             provider.setCredentials(
                     AuthScope.ANY,
                     new UsernamePasswordCredentials(user, pw)
             );
             client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+            encoding="Basic " +encoding;
         } else {
             encoding = token;
             client = HttpClientBuilder.create().build();
@@ -319,6 +321,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         } else if (restMethod.equals(HttpMethod.GET)) {
             response = makeGet(url, connectionMethod, encoding, client);
         } else if (restMethod.equals(HttpMethod.HEAD)) {
+            logger.debug("Head");
             response = makeHead(url, connectionMethod, encoding, client);
         } else if (restMethod.equals(HttpMethod.PUT)) {
             response = makePut(url, connectionMethod, encoding, client, builder);
@@ -403,6 +406,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     private HttpResponse makePut(String url, String connectionMethod, String encoding, HttpClient client, MultipartEntityBuilder builder) throws IOException {
         HttpResponse response;
         HttpPut httpPut = new HttpPut(url);
+        logger.debug(connectionMethod);
         httpPut.setHeader(ACCEPT, connectionMethod);
         httpPut.setHeader(HttpHeaders.AUTHORIZATION, encoding);
 
@@ -467,7 +471,10 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     private HttpResponse makePost(String url, String connectionMethod, String encoding, HttpClient client, MultipartEntityBuilder builder) throws IOException {
         HttpResponse response;
+        logger.debug(builder);
+        logger.debug(encoding);
         HttpPost httpPost = new HttpPost(url);
+        logger.debug(connectionMethod);
         httpPost.setHeader(ACCEPT, connectionMethod);
         httpPost.setHeader(HttpHeaders.AUTHORIZATION, encoding);
 
@@ -641,6 +648,6 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
 		 /** The patch. */
 		 PATCH, 
 		 /** The delete. */
-		 DELETE;
+		 DELETE
     }
 }
