@@ -92,8 +92,8 @@ public class MySql implements ApplicationJdbc {
 
 	@Override
 	public void createTable(String dbName, String tableName, String tableFields) {
-		 executeQuery(dbName, "Create table " + tableName + " (" + tableFields.replace("\"","") + ")");
-		 logger.info("Create table " + tableName + " (" + tableFields + ")");
+		executeUpdate(dbName, "Create table " + tableName + " (" + tableFields.replace("\"","") + ")");
+		logger.info("Create table " + tableName + " (" + tableFields + ")");
 	}
 
 	@Override

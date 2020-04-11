@@ -1,6 +1,7 @@
 package com.acceleratetechnology.jdbc.impl;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.acceleratetechnology.jdbc.ApplicationJdbc;
 import com.acceleratetechnology.jdbc.ApplicationJdbcFactory;
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 import lombok.Cleanup;
 
@@ -32,25 +32,16 @@ public class MicrosoftAccess implements ApplicationJdbc {
 
 	@Override
 	public void createDb(String dbName) throws SQLException {
-		SQLServerDriver driver = new SQLServerDriver();
 		@Cleanup
-		Connection c = driver.connect(jdbcString, null);
-		String sql = "DROP DATABASE IF EXISTS [" + dbName + "]; CREATE DATABASE [" + dbName + "]";
-		try (Statement statement = c.createStatement()) {
-			statement.executeUpdate(sql);
-			logger.info("Drop Completed");
-		} catch (Exception e) {
-			logger.error(e);
-		}
+		Connection c = DriverManager.getConnection(jdbcString);
 		c.close();
 	}
 
 	@Override
 	public List<String[]> executeQuery(String dbName, String query) {
-		SQLServerDriver driver = new SQLServerDriver();
 		List<String[]> results = new LinkedList<>();
 
-		try (Connection c = driver.connect(jdbcString, null); Statement stmt = c.createStatement()) {
+		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
 			try (ResultSet rs = stmt.executeQuery(query)) {
 				int numResultCols = rs.getMetaData().getColumnCount();
 				List<String> headers = new ArrayList<>();
@@ -78,9 +69,7 @@ public class MicrosoftAccess implements ApplicationJdbc {
 
 	@Override
 	public void executeUpdate(String dbName, String query) {
-		SQLServerDriver driver = new SQLServerDriver();
-		
-		try (Connection c = driver.connect(jdbcString, null); Statement stmt = c.createStatement()) {
+		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
@@ -89,13 +78,13 @@ public class MicrosoftAccess implements ApplicationJdbc {
 
 	@Override
 	public void dropTable(String dbName, String tableName) {
-		executeUpdate(dbName, "Drop Table if exists " + tableName);
-		logger.info("Drop Table if exists " + tableName);
+		executeUpdate(dbName, "Drop Table " + tableName);
+		logger.info("Drop Table " + tableName);
 	}
 
 	@Override
 	public void createTable(String dbName, String tableName, String tableFields) {
-		executeUpdate(dbName, "Create table " + tableName + " (" + tableFields + ")");
+		executeUpdate(dbName, "Create table " + tableName + " (" + tableFields.replace("\"","") + ")");
 		logger.info("Create table " + tableName + " (" + tableFields + ")");	
 	}
 

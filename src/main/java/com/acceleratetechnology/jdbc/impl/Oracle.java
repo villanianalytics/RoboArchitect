@@ -85,7 +85,7 @@ public class Oracle implements ApplicationJdbc {
 
 	@Override
 	public void dropTable(String dbName, String tableName) {
-		executeQuery(dbName, "BEGIN\n" +
+		executeUpdate(dbName, "BEGIN\n" +
                 "         EXECUTE IMMEDIATE 'DROP TABLE "+ tableName+"';\n" +
                 "    EXCEPTION\n" +
                 "         WHEN OTHERS THEN\n" +
