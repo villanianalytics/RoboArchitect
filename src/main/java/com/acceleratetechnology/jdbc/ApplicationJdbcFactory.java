@@ -1,14 +1,11 @@
 package com.acceleratetechnology.jdbc;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.reflections.Reflections;
 
 public class ApplicationJdbcFactory {
 	
@@ -17,7 +14,7 @@ public class ApplicationJdbcFactory {
 
 	static {
 		try {
-			loadClasses(ApplicationJdbcFactory.class.getClassLoader(), "com/acceleratetechnology/jdbc/impl");
+			loadClasses("com.acceleratetechnology.jdbc.impl");
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -35,26 +32,14 @@ public class ApplicationJdbcFactory {
 
 	public static ApplicationJdbc getInstance(String type) {
 		return instances.keySet().stream()
-	       .filter(key -> type.contains(key)).map(instances::get).findFirst().orElse(null);
+	       .filter(key -> type.toLowerCase().contains(key)).map(instances::get).findFirst().orElse(null);
 	}
 
-	private static void loadClasses(ClassLoader cl, String packagePath) throws IOException, ClassNotFoundException {
-		String dottedPackage = packagePath.replaceAll("[/]", ".");
-
-		URL upackage = cl.getResource(packagePath);
-		URLConnection conn = upackage.openConnection();
-
-		String rr = IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
-
-		if (rr != null) {
-			String[] paths = rr.split("\n");
-
-			for (String p : paths) {
-				if (p.endsWith(".class")) {
-					Class.forName(dottedPackage + "." + p.substring(0, p.lastIndexOf('.')));
-				}
-
-			}
+	private static void loadClasses(String packagePath) throws ClassNotFoundException {
+		Reflections reflections = new Reflections(packagePath);    
+		Set<Class<? extends ApplicationJdbc>> classes = reflections.getSubTypesOf(ApplicationJdbc.class);
+		for (Class<? extends ApplicationJdbc> c : classes) {
+			Class.forName(c.getCanonicalName());
 		}
 	}
 }
