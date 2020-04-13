@@ -175,7 +175,7 @@
                                     <descriptors>
                                         <descriptor>packaging/zipLinux.xml</descriptor>
                                     </descriptors>
-                                    <finalName>linux/${artifactId}</finalName>
+                                    <finalName>linux/linux${artifactId}</finalName>
                                 </configuration>
                             </execution>
 						</executions>
@@ -260,7 +260,7 @@
 		                                    <descriptors>
 		                                        <descriptor>packaging/zipMac.xml</descriptor>
 		                                    </descriptors>
-		                                    <finalName>mac/${artifactId}</finalName>
+		                                    <finalName>mac/mac${artifactId}</finalName>
 		                                </configuration>
 		                            </execution>
 						</executions>

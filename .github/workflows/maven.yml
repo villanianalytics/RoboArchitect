@@ -20,7 +20,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/RoboArchitect.zip; /target/mac/RoboArchitect.zip;"
+          file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/linuxRoboArchitect.zip; /target/mac/macRoboArchitect.zip;"
           tags: true
           draft: false
           branches: "master"
