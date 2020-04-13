@@ -239,7 +239,7 @@ public class SqlCommand extends AbstractCommand {
 	}
 
 	public void executeQuery(ApplicationJdbc jdbc, String dbName, String query, Map<String, String> outFile,
-			boolean header) throws IOException {
+			boolean header) throws IOException, SQLException {
 		logger.debug("Executing " + query);
 		List<String[]> results = jdbc.executeQuery(dbName, query);
 		logger.debug("Statement Executed");
@@ -300,14 +300,14 @@ public class SqlCommand extends AbstractCommand {
 		}
 	}
 
-	public void executeUpdate(ApplicationJdbc jdbc, String dbName, String query) {
+	public void executeUpdate(ApplicationJdbc jdbc, String dbName, String query) throws SQLException {
 		logger.debug("Executing " + query);
 		jdbc.executeUpdate(dbName, query);
 		logger.debug("Statement Executed");
 	}
 
 	public void importTable(ApplicationJdbc applicationJdbc, String dbName, String tableName, String fileName,
-			char delim, String updateMode) throws IOException {
+			char delim, String updateMode) throws IOException, SQLException {
 		int columnCount = 0;
 
 		CSVParser parser = new CSVParserBuilder().withSeparator(delim).build();

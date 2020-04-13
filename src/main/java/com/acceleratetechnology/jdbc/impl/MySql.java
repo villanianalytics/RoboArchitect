@@ -43,7 +43,7 @@ public class MySql implements ApplicationJdbc {
 	}
 
 	@Override
-	public List<String[]> executeQuery(String dbName, String query) {
+	public List<String[]> executeQuery(String dbName, String query) throws SQLException {
 		List<String[]> results = new LinkedList<>();
 		
 		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
@@ -67,31 +67,28 @@ public class MySql implements ApplicationJdbc {
 					results.add(result.toArray(new String[0]));
 				}
 			}
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
+			
 		}
 		
 		return results;
 	}
 
 	@Override
-	public void executeUpdate(String dbName, String query) {
+	public void executeUpdate(String dbName, String query) throws SQLException {
 		try (Connection c = DriverManager.getConnection(jdbcString); 
 				Statement stmt = c.createStatement()) {
 			stmt.executeUpdate(query);
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
 		}
 	}
 
 	@Override
-	public void dropTable(String dbName, String tableName) {
+	public void dropTable(String dbName, String tableName) throws SQLException {
 		executeUpdate(dbName, "Drop Table if exists " + tableName);
 		logger.info("Drop Table if exists " + tableName);
 	}
 
 	@Override
-	public void createTable(String dbName, String tableName, String tableFields) {
+	public void createTable(String dbName, String tableName, String tableFields) throws SQLException {
 		executeUpdate(dbName, "CREATE TABLE " + tableName + " (" + tableFields.replace("\"","") + ")");
 		logger.info("Create table " + tableName + " (" + tableFields + ")");
 	}

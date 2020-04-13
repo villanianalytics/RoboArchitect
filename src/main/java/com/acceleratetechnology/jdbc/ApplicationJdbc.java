@@ -9,13 +9,13 @@ public interface ApplicationJdbc {
 	
 	public void createDb(String dbName) throws SQLException;
 	
-	public List<String[]> executeQuery(String dbName, String query);
+	public List<String[]> executeQuery(String dbName, String query) throws SQLException;
 	
-	public void executeUpdate(String dbName, String query);
+	public void executeUpdate(String dbName, String query) throws SQLException;
 	
-	public void dropTable(String dbName, String tableName);
+	public void dropTable(String dbName, String tableName) throws SQLException;
 	
-	public void createTable(String dbName, String tableName, String tableFields);
+	public void createTable(String dbName, String tableName, String tableFields) throws SQLException;
 	
 	public String getDataType();
 }

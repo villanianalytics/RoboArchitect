@@ -49,17 +49,18 @@ public class SqlMysqlTest {
 				.withServerVariable("max_connect_errors", 666).build();
 
 		EmbeddedMysql mysqld = anEmbeddedMysql(config).addSchema("testdb").start();
+		String jdbcConnection = "jdbc:mysql://user:pass@localhost:2215/testDB";
+		String db = "testDB";
+		RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=createDB /db=\"" + db + "\""));
 
-		testSQL("jdbc:mysql://user:pass@localhost:2215/testDB", "testDB");
+		RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test_mysql.csv"));
+		
+		testSQL(jdbcConnection, db);
 		
 		mysqld.stop(); 
 	}
 	
     private void testSQL(String jdbcConnection, String db) throws IOException {
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=createDB /db=\"" + db + "\""));
-
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test_mysql.csv"));
-
         System.setOut(out);
         Properties properties = new Properties();
         @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());

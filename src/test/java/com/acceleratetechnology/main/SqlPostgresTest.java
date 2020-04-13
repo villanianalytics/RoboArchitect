@@ -43,7 +43,7 @@ public class SqlPostgresTest {
     private void testSqlPostgres(String jdbcConnection, String db) throws IOException {
         RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=createDB /db=\"" + db + "\""));
 
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test_post.csv"));
 
         System.setOut(out);
         Properties properties = new Properties();
