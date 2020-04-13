@@ -48,7 +48,7 @@ public class SqlMysqlTest {
 				.withTimeout(2, TimeUnit.MINUTES)
 				.withServerVariable("max_connect_errors", 666).build();
 
-		EmbeddedMysql mysqld = anEmbeddedMysql(config).addSchema("testdb").start();
+		EmbeddedMysql mysqld = anEmbeddedMysql(config).addSchema("testDB").start();
 		String jdbcConnection = "jdbc:mysql://user:pass@localhost:2215/testDB";
 		String db = "testDB";
 		RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=createDB /db=\"" + db + "\""));
