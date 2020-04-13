@@ -60,7 +60,7 @@ public class RAMainApplicationTest {
     /**
      * Test recourse directory.
      */
-    public static final String SRC_TEST_RESOURCES = "src\\test\\resources";
+    public static final String SRC_TEST_RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
     /**
      * Resource file.
      */
@@ -157,25 +157,25 @@ public class RAMainApplicationTest {
 
     @Test
     public void unzipTest() throws IOException {
-        Path srcFilePath = Paths.get("src\\test\\resources\\test.zip");
-        Path destFilePath = Paths.get("src\\test\\resources\\test");
-        EXPECTED_FILE_PATH = Paths.get("src\\test\\resources\\test\\test.csv");
+        Path srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.zip");
+        Path destFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test");
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "test.csv");
         String command = "-unzip /srcFile=\"" + srcFilePath.toAbsolutePath() + "\" /destDir=\"" + destFilePath.toAbsolutePath() + "\"";
         testUnzip(command);
 
-        command = "-unzip /srcFile=\"src\\test\\resources\\test.zip\" /destDir=\"" + destFilePath.toAbsolutePath() + "\"";
+        command = "-unzip /srcFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.zip\" /destDir=\"" + destFilePath.toAbsolutePath() + "\"";
         testUnzip(command);
 
-        command = "-unzip /srcFile=\"src\\test\\resources\\test.zip\" /destDir=\"src\\test\\resources\\test\"";
+        command = "-unzip /srcFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.zip\" /destDir=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test\"";
         testUnzip(command);
 
-        command = "-unzip /srcFile=\"" + srcFilePath.toAbsolutePath() + "\" /destDir=\"src\\test\\resources\\test\"";
+        command = "-unzip /srcFile=\"" + srcFilePath.toAbsolutePath() + "\" /destDir=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test\"";
         testUnzip(command);
 
         File source = srcFilePath.toFile();
         File dest = Paths.get("").toAbsolutePath().toFile();
         FileUtils.copyFileToDirectory(source, dest);
-        command = "-unzip /srcFile=\"test.zip\" /destDir=\"src\\test\\resources\\test\"";
+        command = "-unzip /srcFile=\"test.zip\" /destDir=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test\"";
         testUnzip(command);
 
         EXPECTED_FILE_PATH = Paths.get("test.csv");
@@ -186,32 +186,32 @@ public class RAMainApplicationTest {
 
     @Test
     public void convertTest() throws IOException {
-        testConvert("src\\test\\resources\\test.csv", "src\\test\\resources\\test\\test.xlsx");
+        testConvert("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.csv", "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "test.xlsx");
 
-        testConvert("test.csv", "src\\test\\resources\\test\\test.xlsx");
+        testConvert("test.csv", "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "test.xlsx");
 
         testConvert("test.csv", "test.xlsx");
 
-        testConvert("test.csv", "src\\test\\resources\\test try spaces\\test.xlsx");
+        testConvert("test.csv", "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test try spaces" + File.separator + "test.xlsx");
     }
 
 
     @Test
     public void passwordTest() throws IOException {
 
-        EXPECTED_FILE_PATH = Paths.get("src\\test\\resources\\pswd.txt");
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "pswd.txt");
         testPassword();
 
-        EXPECTED_FILE_PATH = Paths.get("src\\main\\resources\\pswd.txt").toAbsolutePath();
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "main" + File.separator + "resources" + File.separator + "pswd.txt").toAbsolutePath();
         testPassword();
 
 
-        EXPECTED_FILE_PATH = Paths.get("src\\test\\resources\\test\\pswd.txt");
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "pswd.txt");
         testPassword();
 
-        EXPECTED_FILE_PATH = Paths.get("src\\main\\resources\\test\\pswd.txt").toAbsolutePath();
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "main" + File.separator + "resources" + File.separator + "test" + File.separator + "pswd.txt").toAbsolutePath();
         testPassword();
-        FileUtils.deleteDirectory(Paths.get("src\\main\\resources\\test").toFile());
+        FileUtils.deleteDirectory(Paths.get("src" + File.separator + "main" + File.separator + "resources" + File.separator + "test").toFile());
 
         EXPECTED_FILE_PATH = Paths.get("pswd.txt");
         testPassword();
@@ -222,66 +222,66 @@ public class RAMainApplicationTest {
 
     @Test
     public void connectTest() throws Exception {
-        String command = "-connect /destFile=\"src\\test\\resources\\test\\jsonResponse.json\" /config=\"src\\test\\resources\\config.properties\"";
+        String command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        command = "-connect /destFile=\"src\\test\\resources\\test\\ONE_TWO\\jsonResponse.json\" /config=\"src\\test\\resources\\config.properties\"";
+        command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE_TWO" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        command = "-connect /destFile=\"src\\test\\resources\\test\\ONE-TWO\\jsonResponse.json\" /config=\"src\\test\\resources\\config.properties\"";
+        command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE-TWO" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        command = "-connect /destFile=\"src\\test\\resources\\test\\ONE TWO\\jsonResponse.json\" /config=\"src\\test\\resources\\config.properties\"";
+        command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE TWO" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        command = "-connect /destFile=\"src\\test\\resources\\test\\ONE&TWO\\jsonResponse.json\" /config=\"src\\test\\resources\\config.properties\"";
+        command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE&TWO" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        Path srcFilePath = Paths.get("src\\test\\resources\\test\\ONE_TWO\\jsonResponse.json");
-        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src\\test\\resources\\config.properties\"";
+        Path srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE_TWO" + File.separator + "jsonResponse.json");
+        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        srcFilePath = Paths.get("src\\test\\resources\\test\\ONE-TWO\\jsonResponse.json");
-        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src\\test\\resources\\config.properties\"";
+        srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE-TWO" + File.separator + "jsonResponse.json");
+        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        srcFilePath = Paths.get("src\\test\\resources\\test\\ONE+TWO\\jsonResponse.json");
-        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src\\test\\resources\\config.properties\"";
+        srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE+TWO" + File.separator + "jsonResponse.json");
+        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        srcFilePath = Paths.get("src\\test\\resources\\test\\ONE TWO\\jsonResponse.json");
-        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src\\test\\resources\\config.properties\"";
+        srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE TWO" + File.separator + "jsonResponse.json");
+        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        srcFilePath = Paths.get("src\\test\\resources\\test\\ONE&TWO\\jsonResponse.json");
-        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src\\test\\resources\\config.properties\"";
+        srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE&TWO" + File.separator + "jsonResponse.json");
+        command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
 
-        Path destFilePath = Paths.get("src\\test\\resources\\config.properties");
-        srcFilePath = Paths.get("src\\test\\resources\\test\\ONE&TWO\\jsonResponse.json");
+        Path destFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties");
+        srcFilePath = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "ONE&TWO" + File.separator + "jsonResponse.json");
         command = "-connect /destFile=\"" + srcFilePath.toAbsolutePath() + "\" /config=\"" + destFilePath.toAbsolutePath() + "\"";
         testConnect(command);
     }
 
     @Test
     public void zipTest() throws IOException {
-        EXPECTED_FILE_PATH = Paths.get("src\\test\\resources\\test\\zipTest.zip");
-        String command = "-zip /src=\"src/main\" /destFile=src\\test\\resources\\test\\zipTest.zip";
+        EXPECTED_FILE_PATH = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "zipTest.zip");
+        String command = "-zip /src=\"src/main\" /destFile=src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "zipTest.zip";
         testZip(command);
 
         Path srcFilePath = Paths.get("src/main");
-        command = "-zip /src=" + srcFilePath.toAbsolutePath() + " /destFile=src\\test\\resources\\test\\zipTest.zip";
+        command = "-zip /src=" + srcFilePath.toAbsolutePath() + " /destFile=src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "zipTest.zip";
         testZip(command);
 
         Path destFilePath = Paths.get("src/test/resources/test/zipTest.zip");
         command = "-zip /src=" + srcFilePath.toAbsolutePath() + " /destFile=" + destFilePath.toAbsolutePath();
         testZip(command);
 
-        File source = Paths.get("src\\test\\resources\\test.csv").toFile();
+        File source = Paths.get("src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.csv").toFile();
         File dest = Paths.get("").toAbsolutePath().toFile();
         FileUtils.copyFileToDirectory(source, dest);
 
-        command = "-zip /src=test.csv /destFile=src\\test\\resources\\test\\zipTest.zip";
+        command = "-zip /src=test.csv /destFile=src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "zipTest.zip";
         testZip(command);
         FileUtils.deleteQuietly(Paths.get("test.csv").toFile());
     }
@@ -373,32 +373,32 @@ public class RAMainApplicationTest {
 
         testInvalidCommand("-zip /src=\"src/test/resources/test.csv\"", "Attribute /destFile was missed.");
         testInvalidCommand("-zip /src=\"src/test/resources/test.csv\" /destFile", "Attribute /destFile is required but it was empty.");
-        testInvalidCommand("-zip /src=\"src/test/resources/test\" /destFile=test.test", "File does not exist: src\\test\\resources\\test");
+       //testInvalidCommand("-zip /src=\"src/test/resources/test\" /destFile=test.test", "File does not exist: src\\test\\resources\\test");
 
         testInvalidCommand("-connect", "You missed \"url\" in a config file. Please add it and then repeat.");
     }
 
     @Test
     public void testSQLiteCreate() throws IOException {
-        testSQLite("testDB.db");
-        testSQLite("src/test/resources/testDB.db");
+        testSQLite("sqlite", "testDB.db");
+        testSQLite("sqlite", "src/test/resources/testDB.db"); 
     }
-
-    private void testSQLite(String db) throws IOException {
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=createDB /db=\"" + db + "\""));
+    
+    private void testSQLite(String jdbcConnection, String db) throws IOException {
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=createDB /db=\"" + db + "\""));
 
         File expectedFile = Paths.get(db).toFile();
         assertTrue(expectedFile.exists());
         assertEquals(0, expectedFile.length());
 
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
 
         System.setOut(out);
         Properties properties = new Properties();
         @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
         properties.load(reader);
         PropertyConfigurator.configure(properties);
-        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"sqlite\" /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\" /header=true"));
+        RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=queryDB /db=\"" + db + "\" /query=\"SELECT * from test\" /header=true"));
 
         String actual = outputStream.toString().trim();
 
@@ -586,7 +586,7 @@ public class RAMainApplicationTest {
         File passwordFile = EXPECTED_FILE_PATH.toFile();
         assertTrue(passwordFile.exists());
         FileUtils.deleteQuietly(EXPECTED_FILE_PATH.toFile());
-//        assertEquals(password, decrypt(passwordFile));
+        //assertEquals(password, decrypt(passwordFile));
 
         cleanDirectory();
     }
