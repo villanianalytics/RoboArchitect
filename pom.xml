@@ -195,7 +195,7 @@
                                     <executable>java</executable>
                                     <arguments>
                                         <argument>-jar</argument>
-                                        <argument>${basedir}/packaging/.jar</argument>
+                                        <argument>${basedir}/packaging/packr.jar</argument>
 
                                         <argument>--platform</argument>
                                         <argument>mac</argument>
