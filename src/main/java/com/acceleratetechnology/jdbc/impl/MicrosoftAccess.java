@@ -78,8 +78,8 @@ public class MicrosoftAccess implements ApplicationJdbc {
 
 	@Override
 	public void dropTable(String dbName, String tableName) {
-		executeUpdate(dbName, "Drop Table " + tableName);
-		logger.info("Drop Table " + tableName);
+		executeUpdate(dbName, "Drop Table if exists " + tableName);
+		logger.info("Drop Table if exists " + tableName);
 	}
 
 	@Override
