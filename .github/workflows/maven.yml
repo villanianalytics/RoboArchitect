@@ -14,13 +14,13 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Maven
-        run: mvn -B clean package --file pom.xml
+        run: mvn -Pmac,linux,windows -B clean package --file pom.xml
       - name: Release
         uses: xresloader/upload-to-github-release@v1.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: "./target/*.exe; ./target/Robo*.jar"
+          file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/RoboArchitect; /target/mac/RoboArchitect;"
           tags: true
           draft: false
           branches: "master"
