@@ -127,7 +127,7 @@
 
                                         <argument>--jdk</argument>
                                         <!--Need to be changed to your linux64 openJDK-->
-                                        <argument>packaging/zulu8.44.0.11-ca-jdk8.0.242-linux_x64.zip</argument>
+                                        <argument>https://github.com/ojdkbuild/contrib_jdk8u-ci/releases/download/jdk8u242-b08/jdk-8u242-ojdkbuild-linux-x64.zip</argument>
 
                                         <argument>--executable</argument>
                                         <argument>RoboArchitect</argument>
@@ -195,14 +195,14 @@
                                     <executable>java</executable>
                                     <arguments>
                                         <argument>-jar</argument>
-                                        <argument>${basedir}/packaging/packr.jar</argument>
+                                        <argument>${basedir}/packaging/.jar</argument>
 
                                         <argument>--platform</argument>
                                         <argument>mac</argument>
 
                                         <argument>--jdk</argument>
                                         <!--Need to be changed to your mac openJDK-->
-                                        <argument>./java-1.8.0-openjdk.macos.x86_64.tar.zip</argument>
+                                        <argument>https://bitbucket.org/alexkasko/openjdk-unofficial-builds/downloads/openjdk-1.7.0-u80-unofficial-macosx-x86_64-image.zip</argument>
 
                                         <argument>--executable</argument>
                                         <argument>RoboArchitect</argument>
