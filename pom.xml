@@ -162,7 +162,7 @@
 								<manifestFile>${project.basedir}/src/main/java/META-INF/MANIFEST.MF</manifestFile>
 							</archive>
 							<!-- Remove the "-jar-with-dependencies" at the end of the file -->
-							<appendAssemblyId>false</appendAssemblyId>
+							<!-- <appendAssemblyId>false</appendAssemblyId> -->
 						</configuration>
 						<executions>
 								<execution>
@@ -247,7 +247,7 @@
 								<manifestFile>${project.basedir}/src/main/java/META-INF/MANIFEST.MF</manifestFile>
 							</archive>
 							<!-- Remove the "-jar-with-dependencies" at the end of the file -->
-							<appendAssemblyId>false</appendAssemblyId>
+							<!-- <appendAssemblyId>false</appendAssemblyId>  -->
 						</configuration>
 						<executions>
 								<execution>
