@@ -22,7 +22,6 @@ jobs:
         with:
           file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/linuxRoboArchitect.zip; /target/mac/macRoboArchitect.zip;"
           tags: true
-          draft: false
-          branches: "github-flow-improve"
+          draft: true
           tag_name: "v1.2.8"
           verbose: true
