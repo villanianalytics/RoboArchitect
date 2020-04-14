@@ -24,13 +24,13 @@ jobs:
             echo "${{ secrets.RELEASE_KEYSTORE }}" > release.p12.asc
             gpg -d -passphrase  "${{ secrets.RELEASE_KEYSTORE_PASS }}" --batch release.p12.asc > release.p12
       - name: Build with Maven
-        run: mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -D keystore.path=release.p12 -Dkeystore.type=pkcs12 -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
+        run: mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -D keystore.path=./release.p12 -Dkeystore.type=pkcs12 -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
       - name: Release
         uses: xresloader/upload-to-github-release@v1.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/linuxRoboArchitect*.zip; /target/mac/macRoboArchitect*.zip;"
+          file: "./target/*.exe; ./target/Robo*.jar; ./target/linux/linuxRoboArchitect*.zip; ./target/mac/macRoboArchitect*.zip;"
           tags: true
           draft: true
           tag_name: "v1.2.8"
