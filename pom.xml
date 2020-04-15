@@ -330,6 +330,7 @@
                             <keystore>${keystore.path}</keystore>
                             <alias>${keystore.alias}</alias>
                             <storepass>${keystore.store.password}</storepass>
+                            <verbose>true</verbose>
                         </configuration>
                     </plugin>
                 </plugins>
