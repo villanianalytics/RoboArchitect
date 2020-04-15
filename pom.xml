@@ -151,21 +151,10 @@
                         </executions>
                     </plugin>
                     <plugin>
-	                    <groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>3.1.0</version>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifestFile>${project.basedir}/src/main/java/META-INF/MANIFEST.MF</manifestFile>
-							</archive>
-							<!-- Remove the "-jar-with-dependencies" at the end of the file -->
-							<!-- <appendAssemblyId>false</appendAssemblyId> -->
-						</configuration>
-						<executions>
-								<execution>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
                                 <id>linux-archive</id>
                                 <phase>package</phase>
                                 <goals>
@@ -178,8 +167,8 @@
                                     <finalName>linux/linux${artifactId}</finalName>
                                 </configuration>
                             </execution>
-						</executions>
-					</plugin>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -236,35 +225,24 @@
                         </executions>
                     </plugin>
                     <plugin>
-	                    <groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>3.1.0</version>
-						<configuration>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<archive>
-								<manifestFile>${project.basedir}/src/main/java/META-INF/MANIFEST.MF</manifestFile>
-							</archive>
-							<!-- Remove the "-jar-with-dependencies" at the end of the file -->
-							<!-- <appendAssemblyId>false</appendAssemblyId>  -->
-						</configuration>
-						<executions>
-								<execution>
-		                                <id>mac-archive</id>
-		                                <phase>package</phase>
-		                                <goals>
-		                                    <goal>single</goal>
-		                                </goals>
-		                                <configuration>
-		                                    <descriptors>
-		                                        <descriptor>packaging/zipMac.xml</descriptor>
-		                                    </descriptors>
-		                                    <finalName>mac/mac${artifactId}</finalName>
-		                                </configuration>
-		                            </execution>
-						</executions>
-					</plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>mac-archive</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>packaging/zipMac.xml</descriptor>
+                                    </descriptors>
+                                    <finalName>mac/mac${artifactId}</finalName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -701,7 +679,6 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.11</version>
         </dependency>
-
 
 		<!--  Test databases -->
 		<!-- https://mvnrepository.com/artifact/com.wix/wix-embedded-mysql -->
