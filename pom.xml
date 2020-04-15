@@ -201,8 +201,7 @@
                                         <argument>mac</argument>
 
                                         <argument>--jdk</argument>
-                                        <!--Need to be changed to your mac openJDK-->
-                                        <argument>https://bitbucket.org/alexkasko/openjdk-unofficial-builds/downloads/openjdk-1.7.0-u80-unofficial-macosx-x86_64-image.zip</argument>
+                                        <argument>https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jdk8.0.252-macosx_x64.zip</argument>
 
                                         <argument>--executable</argument>
                                         <argument>RoboArchitect</argument>
@@ -217,6 +216,9 @@
                                         <argument>--mainclass</argument>
                                         <argument>com.acceleratetechnology.main.RAMainApplication</argument>
 
+										<argument>--icon</argument>
+                                        <argument>packaging/RoboArchitect.icns</argument>
+                                        
                                         <argument>--output</argument>
                                         <argument>target/${artifactId}Mac</argument>
                                     </arguments>
@@ -679,7 +681,6 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.11</version>
         </dependency>
-
 		<!--  Test databases -->
 		<!-- https://mvnrepository.com/artifact/com.wix/wix-embedded-mysql -->
 		<dependency>

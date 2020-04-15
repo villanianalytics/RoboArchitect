@@ -31,6 +31,7 @@ jobs:
         with:
           file: "./target/RoboArchitectWindows/*.exe; ./target/Robo*.jar; ./target/linux/linuxRoboArchitect*.zip; ./target/mac/macRoboArchitect*.zip;"
           tags: true
-          draft: true
+          draft: false
+          branches: "master"
           tag_name: "v1.2.8"
           verbose: true
