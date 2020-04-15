@@ -476,6 +476,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         HttpPost httpPost = new HttpPost(url);
         logger.debug(connectionMethod);
         httpPost.setHeader(ACCEPT, connectionMethod);
+        httpPost.setHeader(HttpHeaders.CONTENT_TYPE, connectionMethod);
         httpPost.setHeader(HttpHeaders.AUTHORIZATION, encoding);
 
         if (builder != null) {
