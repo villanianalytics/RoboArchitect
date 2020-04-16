@@ -1,12 +1,5 @@
 package com.acceleratetechnology.controller;
 
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import lombok.Cleanup;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,6 +9,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import com.acceleratetechnology.controller.exceptions.MissedParameterException;
+
+import lombok.Cleanup;
 
 /**
  * Command with attributes.
@@ -222,10 +222,10 @@ public abstract class AbstractCommand {
     }
     
     public void logCommands() {
-    	String unsedCommands = getUnUsedCommands();
+    	Set<String> unsedCommands = getUnUsedCommands();
     	
-    	if (!StringUtils.isEmpty(unsedCommands)) {
-    		logger.info("Unsed commands - " + getUnUsedCommands());
+    	if (unsedCommands.size() > 0) {
+    		logger.info("Unsed commands - " + unsedCommands.toString());
     	}
     }
     
@@ -233,13 +233,13 @@ public abstract class AbstractCommand {
     	return usedAttributes.toString();
     }
     
-    protected String getUnUsedCommands() {
+    protected Set<String> getUnUsedCommands() {
     	Set<String> unsedCommands = new HashSet<>();
     	
     	for(String key : attributes.keySet()) {
     		if (!usedAttributes.contains(key)) unsedCommands.add(key);
     	}
     	
-    	return unsedCommands.toString();
+    	return unsedCommands;
     }
 }
