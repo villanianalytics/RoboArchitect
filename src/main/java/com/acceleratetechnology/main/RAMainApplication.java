@@ -1,16 +1,16 @@
 package com.acceleratetechnology.main;
 
-import com.acceleratetechnology.controller.AbstractCommand;
-import com.acceleratetechnology.controller.Command;
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import org.apache.log4j.Logger;
-import org.reflections.Reflections;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.reflections.Reflections;
+
+import com.acceleratetechnology.controller.AbstractCommand;
+import com.acceleratetechnology.controller.Command;
 
 /**
  * Main class.
@@ -64,7 +64,8 @@ public class RAMainApplication {
                      AbstractCommand command = (AbstractCommand) (constructor.newInstance(new Object[]{commandArgs}));
                      logger = Logger.getLogger(RAMainApplication.class);
                      command.execute();
-
+                     command.logCommands();
+                     
                      commands.clear();
                      if(i < args.length) {
                          commands.add(args[i]);
