@@ -21,7 +21,7 @@ jobs:
         run: |
             echo "${{ secrets.RELEASE_KEYSTORE }}" > release.p12.asc
             echo "${{ secrets.RELEASE_KEYSTORE_PASS }}" | gpg --batch --no-tty --yes --passphrase-fd 0 --decrypt release.p12.asc > release.p12
-            mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -Dkeystore.path="release.p12" -Dkeystore.type="pkcs12" -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
+            mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -Dmaven.test.skip=true -Dkeystore.path="release.p12" -Dkeystore.type="pkcs12" -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
       - name: Release
         uses: xresloader/upload-to-github-release@v1.1.1
         env:
