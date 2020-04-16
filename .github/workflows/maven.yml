@@ -14,8 +14,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Download windows jre
-        with:
-          args: |
+        run: |
             wget -c https://github.com/ojdkbuild/ojdkbuild/releases/download/java-1.8.0-openjdk-1.8.0.242-1.b08-x86/java-1.8.0-openjdk-1.8.0.242-1.b08.ojdkbuild.windows.x86.zip -O jdk.zip
             unzip jdk.zip -d ./java
       - name: Build with Maven
