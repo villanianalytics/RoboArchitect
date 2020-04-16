@@ -11,64 +11,74 @@
     <profiles>
         <profile>
             <id>windows-with-jre</id>
+            <properties>
+                <keystore.path>${keystore.path}</keystore.path>
+                <keystore.type>${keystore.type}</keystore.type>
+                <keystore.alias>${keystore.alias}</keystore.alias>
+                <keystore.store.password>${keystore.store.password}</keystore.store.password>
+            </properties>
             <build>
                 <plugins>
-                     <plugin>
-		                <!-- this is to extract the JRE tgz file we downloaded -->
-		                <groupId>org.apache.maven.plugins</groupId>
-		                <artifactId>maven-dependency-plugin</artifactId>
-		                <version>2.5.1</version>
-		                <executions>
-		                    <execution>
-		                        <phase>generate-resources</phase>
-		                        <goals>
-		                            <goal>unpack-dependencies</goal>
-		                        </goals>
-		                        <configuration>
-		                            <includeGroupIds>com.oracle.java</includeGroupIds>
-		                            <includeTypes>tgz</includeTypes>
-		                            <includeArtifactIds>jre</includeArtifactIds>
-		                            <includeClassifiers>win32</includeClassifiers>
-		                            <outputDirectory>target/win32</outputDirectory>
-		                        </configuration>
-		                    </execution>
-		                </executions>
-		            </plugin>
                     <plugin>
-                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                        <artifactId>launch4j-maven-plugin</artifactId>
-                        <version>1.5.1</version>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>windows-create-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${basedir}/packaging/packr.jar</argument>
+
+                                        <argument>--platform</argument>
+                                        <argument>windows32</argument>
+
+                                        <argument>--jdk</argument>
+                                        <argument>https://github.com/ojdkbuild/ojdkbuild/releases/download/java-1.8.0-openjdk-1.8.0.242-1.b08-x86/java-1.8.0-openjdk-1.8.0.242-1.b08.ojdkbuild.windows.x86.zip</argument>
+
+                                        <argument>--executable</argument>
+                                        <argument>RoboArchitect</argument>
+
+                                        <argument>--classpath</argument>
+                                        <argument>target/${artifactId}-${version}.jar</argument>
+
+                                        <argument>--vmargs</argument>
+                                        <argument>Xmx1G</argument>
+                                        <argument>Dfile.encoding=UTF-8</argument>
+
+                                        <argument>--mainclass</argument>
+                                        <argument>com.acceleratetechnology.main.RAMainApplication</argument>
+
+                                        <argument>--output</argument>
+                                        <argument>target/${artifactId}Windows</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.jsign</groupId>
+                        <artifactId>jsign-maven-plugin</artifactId>
+                        <version>3.0</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
-                                <id>make-windows-bundled</id>
                                 <goals>
-                                    <goal>launch4j</goal>
+                                    <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <headerType>console</headerType>
-                                    <outfile>target/${artifactId}Windows/${artifactId}.exe</outfile>
-                                    <jar>target/${artifactId}-${version}.jar</jar>
-                                    <errTitle>App Err</errTitle>
-                                    <icon>${icon.source}</icon>
-                                    <classPath>
-                                        <mainClass>com/acceleratetechnology/main/RAMainApplication</mainClass>
-                                    </classPath>
-                                    <jre>
-                                        <path>java</path>
-                                    </jre>
-                                    <versionInfo>
-                                        <fileVersion>1.0.0.0</fileVersion>
-                                        <txtFileVersion>${project.version}</txtFileVersion>
-                                        <fileDescription>${project.name}</fileDescription>
-                                        <copyright>2020 Villani Analytics LLC. All rights reserved.</copyright>
-                                        <productVersion>1.0.0.0</productVersion>
-                                        <txtProductVersion>1.0.0.0</txtProductVersion>
-                                        <productName>${project.name}</productName>
-                                        <companyName>Villani Analytics LLC</companyName>
-                                        <internalName>${artifactId}</internalName>
-                                        <originalFilename>${artifactId}.exe</originalFilename>
-                                    </versionInfo>
+                                    <file>target/${artifactId}Windows/${artifactId}.exe</file>
+                                    <name>RoboArchitect</name>
+                                    <url>http://www.example.com</url>
+                                    <keystore>${keystore.path}</keystore>
+                                    <alias>${keystore.alias}</alias>
+                                    <storepass>${keystore.store.password}</storepass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -358,7 +368,6 @@
                                 </goals>
                                 <configuration>
                                     <file>target/${artifactId}.exe</file>
-                                    <file>target/${artifactId}Windows/${artifactId}.exe</file>
                                     <name>RoboArchitect</name>
                                     <url>http://www.example.com</url>
                                     <keystore>${keystore.path}</keystore>
@@ -694,19 +703,5 @@
 		    <version>0.13.3</version>
 		    <scope>test</scope>
 		</dependency>
-    	<dependency>
-            <groupId>com.oracle.java</groupId>
-            <artifactId>jre</artifactId>
-            <classifier>win32</classifier>
-            <type>tgz</type>
-            <version>1.8.0_131</version>
-        </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <!-- this repository has the JRE tgz -->
-            <id>alfresco</id>
-            <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
-        </repository>
-    </repositories>
 </project>
