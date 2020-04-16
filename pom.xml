@@ -13,29 +13,27 @@
             <id>windows-with-jre</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.6</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <!-- here the phase you need -->
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/${artifactId}Windows/java</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${java.home}</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                     <plugin>
+		                <!-- this is to extract the JRE tgz file we downloaded -->
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-dependency-plugin</artifactId>
+		                <version>2.5.1</version>
+		                <executions>
+		                    <execution>
+		                        <phase>generate-resources</phase>
+		                        <goals>
+		                            <goal>unpack-dependencies</goal>
+		                        </goals>
+		                        <configuration>
+		                            <includeGroupIds>com.oracle.java</includeGroupIds>
+		                            <includeTypes>tgz</includeTypes>
+		                            <includeArtifactIds>jre</includeArtifactIds>
+		                            <includeClassifiers>win32</includeClassifiers>
+		                            <outputDirectory>target/win32</outputDirectory>
+		                        </configuration>
+		                    </execution>
+		                </executions>
+		            </plugin>
                     <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
@@ -89,7 +87,7 @@
                                     <descriptors>
                                         <descriptor>packaging/zipWindows.xml</descriptor>
                                     </descriptors>
-                                    <finalName>windows/${artifactId}</finalName>
+                                    <finalName>windows/windows${artifactId}</finalName>
                                 </configuration>
                             </execution>
                         </executions>
@@ -696,5 +694,19 @@
 		    <version>0.13.3</version>
 		    <scope>test</scope>
 		</dependency>
+    	<dependency>
+            <groupId>com.oracle.java</groupId>
+            <artifactId>jre</artifactId>
+            <classifier>win32</classifier>
+            <type>tgz</type>
+            <version>1.8.0_131</version>
+        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <!-- this repository has the JRE tgz -->
+            <id>alfresco</id>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+        </repository>
+    </repositories>
 </project>
