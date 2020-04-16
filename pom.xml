@@ -368,6 +368,7 @@
                                 </goals>
                                 <configuration>
                                     <file>target/${artifactId}.exe</file>
+                                    <file>target/${artifactId}Windows/${artifactId}.exe</file>
                                     <name>RoboArchitect</name>
                                     <url>http://www.example.com</url>
                                     <keystore>${keystore.path}</keystore>
