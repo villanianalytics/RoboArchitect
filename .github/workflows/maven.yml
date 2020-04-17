@@ -15,7 +15,7 @@ jobs:
           java-version: 1.8
       - name: Download windows jre
         run: |
-            wget -c https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jdk8.0.252-win_i686.zip
+            wget -c https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jdk8.0.252-win_i686.zip -O jdk.zip
             unzip jdk.zip -d ./java
             mv ./java/*/* ./java
       - name: Build with Maven
