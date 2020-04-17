@@ -232,14 +232,14 @@ public class SqlCommand extends AbstractCommand {
 				|| returnString.equals("1");
 	}
 
-	public void createDB(ApplicationJdbc jdbc, String dbName) throws SQLException {
+	public void createDB(ApplicationJdbc jdbc, String dbName) throws SQLException, ClassNotFoundException {
 		logger.debug("Creating database " + dbName);
 		jdbc.createDb(dbName);
 		logger.info("Successfully created database");
 	}
 
 	public void executeQuery(ApplicationJdbc jdbc, String dbName, String query, Map<String, String> outFile,
-			boolean header) throws IOException, SQLException {
+			boolean header) throws IOException, SQLException, ClassNotFoundException {
 		logger.debug("Executing " + query);
 		List<String[]> results = jdbc.executeQuery(dbName, query);
 		logger.debug("Statement Executed");
@@ -300,14 +300,14 @@ public class SqlCommand extends AbstractCommand {
 		}
 	}
 
-	public void executeUpdate(ApplicationJdbc jdbc, String dbName, String query) throws SQLException {
+	public void executeUpdate(ApplicationJdbc jdbc, String dbName, String query) throws SQLException, ClassNotFoundException {
 		logger.debug("Executing " + query);
 		jdbc.executeUpdate(dbName, query);
 		logger.debug("Statement Executed");
 	}
 
 	public void importTable(ApplicationJdbc applicationJdbc, String dbName, String tableName, String fileName,
-			char delim, String updateMode) throws IOException, SQLException {
+			char delim, String updateMode) throws IOException, SQLException, ClassNotFoundException {
 		int columnCount = 0;
 
 		CSVParser parser = new CSVParserBuilder().withSeparator(delim).build();
