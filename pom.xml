@@ -89,7 +89,7 @@
                                     <descriptors>
                                         <descriptor>packaging/zipWindows.xml</descriptor>
                                     </descriptors>
-                                    <finalName>windows/windows${artifactId}</finalName>
+                                    <finalName>windows/windows${artifactId}-withJRE</finalName>
                                 </configuration>
                             </execution>
                         </executions>
