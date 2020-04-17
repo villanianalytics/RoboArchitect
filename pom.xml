@@ -29,7 +29,7 @@
                                     <outputDirectory>${basedir}/target/${artifactId}Windows/java</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${java.home}</directory>
+                                            <directory>${basedir}/java/jre</directory>
                                         </resource>
                                     </resources>
                                 </configuration>
@@ -89,7 +89,7 @@
                                     <descriptors>
                                         <descriptor>packaging/zipWindows.xml</descriptor>
                                     </descriptors>
-                                    <finalName>windows/${artifactId}</finalName>
+                                    <finalName>windows/windows${artifactId}-withJRE</finalName>
                                 </configuration>
                             </execution>
                         </executions>
