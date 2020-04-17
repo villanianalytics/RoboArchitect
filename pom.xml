@@ -57,7 +57,7 @@
                                         <mainClass>com/acceleratetechnology/main/RAMainApplication</mainClass>
                                     </classPath>
                                     <jre>
-                                        <path>${basedir}/java/jre</path>
+                                        <path>java</path>
                                     </jre>
                                     <versionInfo>
                                         <fileVersion>1.0.0.0</fileVersion>
