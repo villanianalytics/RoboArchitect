@@ -36,6 +36,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import com.acceleratetechnology.connect.HttpUtils;
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
 import com.github.villanianalytics.unsql.UnSql;
 import com.github.villanianalytics.unsql.UnSql.EXPORT_FORMAT;
@@ -46,6 +47,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.jayway.jsonpath.JsonPath;
+
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Connect to any web service by using http response and get a result from there.
@@ -225,7 +229,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
             throw new MissedParameterException("Connection method \"" + httpMethod + "\" is not supported.");
         }
 
-        String response = getJSONResponse(user, pw, token, url, restMethod, srcFile, body, connectMethod);
+        String response = getJSONResponse2(user, pw, token, url, restMethod, srcFile, body, connectMethod);
 
         String jsonPath = getAttribute(JSON_PATH_PARAM);
         if (jsonPath != null && !jsonPath.isEmpty()) {
@@ -283,6 +287,45 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws MissedParameterException the missed parameter exception
      */
+   
+    
+    private String getJSONResponse2(String user, String pw, String token, String url, HttpMethod restMethod, File sourceFile, String body, String connectionMethod) throws IOException {
+    	HttpUtils httpUtil = new HttpUtils(url);
+    	
+    	if (user != null ) {
+    		httpUtil.addHeadersAuth(user, pw);
+    	}
+    	
+    	if (token != null) {
+    		httpUtil.addHeadersAuth(token);
+    	}
+    	
+    	httpUtil.addHeadersContent(connectionMethod);
+    	
+    	// create body 
+    	RequestBody requestBody = null;
+    	if (sourceFile != null) {
+    		requestBody = httpUtil.createBody(sourceFile);
+    	}
+    	if (body != null ) {
+    		requestBody = httpUtil.createBody(connectionMethod, body);
+    	}
+    	
+    	Response response = httpUtil.doCall(restMethod.toString(), requestBody);
+    	int status = response.code();
+    	String responseBody = response.body().string();
+    	
+    	if (status < 200 || status > 300) {
+             throw new IOException("HTTP " + response.code() + " - Error during upload of file: " + responseBody);
+        }
+    	
+    	if (!responseBody.isEmpty()) {
+           return prettyJsonFormatter(responseBody);
+        }
+    	
+    	return responseBody;
+    }
+    
     private String getJSONResponse(String user, String pw, String token, String url, HttpMethod restMethod, File sourceFile, String body, String connectionMethod) throws IOException, MissedParameterException {
         System.setProperty(HTTPS_PROTOCOLS, TLSV_1_2);
         String encoding;
@@ -321,7 +364,6 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         } else if (restMethod.equals(HttpMethod.GET)) {
             response = makeGet(url, connectionMethod, encoding, client);
         } else if (restMethod.equals(HttpMethod.HEAD)) {
-            logger.debug("Head");
             response = makeHead(url, connectionMethod, encoding, client);
         } else if (restMethod.equals(HttpMethod.PUT)) {
             response = makePut(url, connectionMethod, encoding, client, builder);

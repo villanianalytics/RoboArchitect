@@ -698,9 +698,15 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
 		<dependency>
-		    <groupId>com.squareup.okhttp</groupId>
+		    <groupId>com.squareup.okhttp3</groupId>
 		    <artifactId>okhttp</artifactId>
-		    <version>2.7.5</version>
+		    <version>4.0.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.squareup.okhttp3</groupId>
+		    <artifactId>mockwebserver</artifactId>
+		    <version>4.0.1</version>
+		    <scope>test</scope>
 		</dependency>
     </dependencies>
 </project>

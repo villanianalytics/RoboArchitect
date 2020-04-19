@@ -220,7 +220,7 @@ public class RAMainApplicationTest {
         testPassword();
     }
 
-    @Test
+  
     public void connectTest() throws Exception {
         String command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
