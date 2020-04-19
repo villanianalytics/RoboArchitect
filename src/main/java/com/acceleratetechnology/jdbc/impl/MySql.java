@@ -29,7 +29,8 @@ public class MySql implements ApplicationJdbc {
 	}
 
 	@Override
-	public void createDb(String dbName) throws SQLException {
+	public void createDb(String dbName) throws SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
 		try (Connection c = DriverManager.getConnection(jdbcString)) {
 			String sql = "create database if not exists " + dbName;
 			logger.debug(sql);
@@ -43,7 +44,8 @@ public class MySql implements ApplicationJdbc {
 	}
 
 	@Override
-	public List<String[]> executeQuery(String dbName, String query) throws SQLException {
+	public List<String[]> executeQuery(String dbName, String query) throws SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
 		List<String[]> results = new LinkedList<>();
 		
 		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
@@ -74,7 +76,8 @@ public class MySql implements ApplicationJdbc {
 	}
 
 	@Override
-	public void executeUpdate(String dbName, String query) throws SQLException {
+	public void executeUpdate(String dbName, String query) throws SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
 		try (Connection c = DriverManager.getConnection(jdbcString); 
 				Statement stmt = c.createStatement()) {
 			stmt.executeUpdate(query);
@@ -82,13 +85,13 @@ public class MySql implements ApplicationJdbc {
 	}
 
 	@Override
-	public void dropTable(String dbName, String tableName) throws SQLException {
+	public void dropTable(String dbName, String tableName) throws SQLException, ClassNotFoundException {
 		executeUpdate(dbName, "Drop Table if exists " + tableName);
 		logger.info("Drop Table if exists " + tableName);
 	}
 
 	@Override
-	public void createTable(String dbName, String tableName, String tableFields) throws SQLException {
+	public void createTable(String dbName, String tableName, String tableFields) throws SQLException, ClassNotFoundException {
 		executeUpdate(dbName, "CREATE TABLE " + tableName + " (" + tableFields.replace("\"","") + ")");
 		logger.info("Create table " + tableName + " (" + tableFields + ")");
 	}

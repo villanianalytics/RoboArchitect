@@ -1,17 +1,21 @@
 package com.acceleratetechnology.controller;
 
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import lombok.Cleanup;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import com.acceleratetechnology.controller.exceptions.MissedParameterException;
+
+import lombok.Cleanup;
 
 /**
  * Command with attributes.
@@ -45,6 +49,8 @@ public abstract class AbstractCommand {
      * All attributes and there values.
      */
     private HashMap<String, String> attributes;
+    
+    private Set<String> usedAttributes = new HashSet<>();
 
     public AbstractCommand(String[] args) throws IOException, MissedParameterException {
         attributes = new HashMap<>();
@@ -66,6 +72,7 @@ public abstract class AbstractCommand {
      */
     private void writeLogsToFile() throws IOException, MissedParameterException {
         if (attributes.containsKey(LOG_ATTRIBUTE)) {
+        	usedAttributes.add(LOG_ATTRIBUTE);
             String logFile = attributes.get(LOG_ATTRIBUTE);
             if (logFile != null && !logFile.isEmpty()) {
                 System.setProperty("log.file", logFile);
@@ -103,6 +110,7 @@ public abstract class AbstractCommand {
 
     private void addProperties() throws MissedParameterException, IOException {
         if (attributes.containsKey(CONFIG_ATTRIBUTE)) {
+        	usedAttributes.add(CONFIG_ATTRIBUTE);
             Properties properties = new Properties();
             File configFile = Paths.get(attributes.get(CONFIG_ATTRIBUTE)).toFile();
             if (configFile.exists() && configFile.isFile()) {
@@ -179,7 +187,9 @@ public abstract class AbstractCommand {
      * @return value of an attribute.
      */
     public String getAttribute(String attribute) {
-        return attributes.get(attribute);
+    	if (attributes.containsKey(attribute)) usedAttributes.add(attribute);
+        
+    	return attributes.get(attribute);
     }
 
     /**
@@ -190,7 +200,9 @@ public abstract class AbstractCommand {
      * @throws MissedParameterException when required data.
      */
     public String getRequiredAttribute(String attribute) throws MissedParameterException {
-        logger.debug("Start getting required \"" + attribute + "\"");
+    	if (attributes.containsKey(attribute)) usedAttributes.add(attribute);
+        
+    	logger.debug("Start getting required \"" + attribute + "\"");
         if (attributes.containsKey(attribute)) {
             String value = attributes.get(attribute);
             logger.debug("Value \"" + value + "\" was gotten");
@@ -204,7 +216,30 @@ public abstract class AbstractCommand {
     }
 
     public String getDefaultAttribute(String attribute, String defaultValue) {
-        String value = getAttribute(attribute);
+    	String value = getAttribute(attribute);
+        
         return (value == null) ? defaultValue : value;
+    }
+    
+    public void logCommands() {
+    	Set<String> unsedCommands = getUnUsedCommands();
+    	
+    	if (unsedCommands.size() > 0) {
+    		logger.info("Unsed commands - " + unsedCommands.toString());
+    	}
+    }
+    
+    protected String getUsedCommands() {
+    	return usedAttributes.toString();
+    }
+    
+    protected Set<String> getUnUsedCommands() {
+    	Set<String> unsedCommands = new HashSet<>();
+    	
+    	for(String key : attributes.keySet()) {
+    		if (!usedAttributes.contains(key)) unsedCommands.add(key);
+    	}
+    	
+    	return unsedCommands;
     }
 }

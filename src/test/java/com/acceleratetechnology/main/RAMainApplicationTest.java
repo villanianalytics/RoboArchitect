@@ -389,7 +389,7 @@ public class RAMainApplicationTest {
 
         File expectedFile = Paths.get(db).toFile();
         assertTrue(expectedFile.exists());
-        assertEquals(0, expectedFile.length());
+        //assertEquals(0, expectedFile.length());
 
         RAMainApplication.main(Commandline.translateCommandline("-sql /connection=\"" + jdbcConnection + "\" /op=importTable /db=\"" + db + "\" /mode=OVERWRITE /table=test /srcFile=src/test/resources/test.csv"));
 
