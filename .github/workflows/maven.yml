@@ -2,6 +2,9 @@ name: RoboArchitect Release
 
 on: [push]
 
+env:
+  release: "1.2.9"
+
 jobs:
   build:
 
@@ -22,7 +25,7 @@ jobs:
         run: |
             echo "${{ secrets.RELEASE_KEYSTORE }}" > release.p12.asc
             echo "${{ secrets.RELEASE_KEYSTORE_PASS }}" | gpg --batch --no-tty --yes --passphrase-fd 0 --decrypt release.p12.asc > release.p12
-            mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -Dkeystore.path="release.p12" -Dkeystore.type="pkcs12" -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
+            mvn -e clean package -P mac,windows,windows-with-jre,linux,sign,sign-exe -Drobo.version="${evn.release}" -Dkeystore.path="release.p12" -Dkeystore.type="pkcs12" -Dkeystore.alias="${{ secrets.RELEASE_ALIAS }}" -Dkeystore.store.password="${{ secrets.RELEASE_PASS }}" --file pom.xml
       - name: Release
         uses: xresloader/upload-to-github-release@v1.1.1
         env:
@@ -32,5 +35,5 @@ jobs:
           tags: true
           draft: false
           branches: "master"
-          tag_name: "v1.2.9"
+          tag_name: "v${{ env.release }}"
           verbose: true
