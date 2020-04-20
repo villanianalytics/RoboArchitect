@@ -31,14 +31,16 @@ public class MicrosoftAccess implements ApplicationJdbc {
 	}
 
 	@Override
-	public void createDb(String dbName) throws SQLException {
+	public void createDb(String dbName) throws SQLException, ClassNotFoundException {
+		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		@Cleanup
 		Connection c = DriverManager.getConnection(jdbcString);
 		c.close();
 	}
 
 	@Override
-	public List<String[]> executeQuery(String dbName, String query) {
+	public List<String[]> executeQuery(String dbName, String query) throws ClassNotFoundException {
+		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		List<String[]> results = new LinkedList<>();
 
 		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
@@ -68,7 +70,8 @@ public class MicrosoftAccess implements ApplicationJdbc {
 	}
 
 	@Override
-	public void executeUpdate(String dbName, String query) {
+	public void executeUpdate(String dbName, String query) throws ClassNotFoundException {
+		Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 		try (Connection c = DriverManager.getConnection(jdbcString); Statement stmt = c.createStatement()) {
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
@@ -77,13 +80,13 @@ public class MicrosoftAccess implements ApplicationJdbc {
 	}
 
 	@Override
-	public void dropTable(String dbName, String tableName) {
+	public void dropTable(String dbName, String tableName) throws ClassNotFoundException {
 		executeUpdate(dbName, "Drop Table if exists " + tableName);
 		logger.info("Drop Table if exists " + tableName);
 	}
 
 	@Override
-	public void createTable(String dbName, String tableName, String tableFields) {
+	public void createTable(String dbName, String tableName, String tableFields) throws ClassNotFoundException {
 		executeUpdate(dbName, "Create table " + tableName + " (" + tableFields.replace("\"","") + ")");
 		logger.info("Create table " + tableName + " (" + tableFields + ")");	
 	}
