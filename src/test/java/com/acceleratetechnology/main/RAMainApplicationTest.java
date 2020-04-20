@@ -591,13 +591,14 @@ public class RAMainApplicationTest {
         cleanDirectory();
     }
 
-    void cleanDirectory() {
+    public static void cleanDirectory() {
         for (File file : Objects.requireNonNull(RAMainApplicationTest.RESOURCES.listFiles())) {
             if (!file.getName().equals("test.zip") && 
             		!file.getName().equals("test.csv") && 
             		!file.getName().equals("test_mysql.csv") && 
             		!file.getName().equals("test_post.csv") && 
-            		!file.getName().equals("config.properties")) {
+            		!file.getName().equals("config.properties") &&
+            		!file.getName().equals("newdb.accdb")) {
                 //delete file
                 FileUtils.deleteQuietly(file);
             }

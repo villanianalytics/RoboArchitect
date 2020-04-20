@@ -78,7 +78,6 @@ public class HttpUtils {
 		
 	}
 	
-	
 	public Response get() throws IOException {
 		OkHttpClient client = new OkHttpClient();
 		
@@ -123,14 +122,6 @@ public class HttpUtils {
 		OkHttpClient client = new OkHttpClient();
 		
 		Request request = builder.method("PATCH", body).build();
-	
-		return client.newCall(request).execute();
-	}
-	
-	public Response options(RequestBody body) throws IOException {
-		OkHttpClient client = new OkHttpClient();
-		
-		Request request = builder.method("OPTIONS", body).build();
 	
 		return client.newCall(request).execute();
 	}

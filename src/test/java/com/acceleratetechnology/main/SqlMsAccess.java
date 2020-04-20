@@ -33,12 +33,12 @@ public class SqlMsAccess {
 	public void testSqlMsAccess() throws IOException {
 		File fileToCopy = new File(
 				"src" + File.separator + "test" + File.separator + "resources" + File.separator + "newdb.accdb");
-		File newFile = new File(
-				"src" + File.separator + "test" + File.separator + "resources" + File.separator + "newdb_temp.accdb");
-
+		File newFile = new File("newdb_temp.accdb");
+		newFile.createNewFile();
+		
 		FileUtils.copyFile(fileToCopy, newFile);
 
-		testSQL("jdbc:ucanaccess://src/test/resources/newdb_temp.accdb", "newdb_temp.accdb");
+		testSQL("jdbc:ucanaccess://newdb_temp.accdb", "newdb_temp.accdb");
 
 		FileUtils.deleteQuietly(newFile);
 	}
