@@ -136,7 +136,7 @@ public class EmailCommand extends EncryptDecryptAbstractCommand {
     @Override
     public void execute() throws IOException, MissedParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, MessagingException {
     	logger.trace("EmailCommand.execute started");
-    	String subject = getFromConfOrAttribute(SUBJECT_CONFIG_PROPERTY, SUBJECT_PARAM);
+     	String subject = getFromConfOrAttribute(SUBJECT_CONFIG_PROPERTY, SUBJECT_PARAM);
         String body = getFromConfOrAttribute(BODY_CONFIG_PROPERTY, BODY_PARAM);
         String password = getPassword();
 
