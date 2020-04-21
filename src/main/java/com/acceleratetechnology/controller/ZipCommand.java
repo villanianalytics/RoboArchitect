@@ -38,7 +38,7 @@ public class ZipCommand extends AbstractCommand {
         String dest = getRequiredAttribute(DEST_FILE_PARAM);
 
         zip(src, dest);
-        logger.info("Zipped.");
+        logResponse("Zipped.");
     }
 
     /**
@@ -49,7 +49,7 @@ public class ZipCommand extends AbstractCommand {
      * @throws ZipException Zip exception.
      */
     private void zip(String srcDir, String destDir) throws ZipException {
-        logger.debug("Zip operation start");
+        logger.trace("ZipCommand.Zip operation start");
 
         Path srcPath = Paths.get(srcDir);
         Path destPath = Paths.get(destDir);
@@ -59,26 +59,25 @@ public class ZipCommand extends AbstractCommand {
 
         File parentFile = destFile.getParentFile();
 
-        logger.debug("Check if destination directory \"" + destDir + "\" exists.");
+        logger.trace("Check if destination directory \"" + destDir + "\" exists.");
         if (parentFile != null && !parentFile.exists()) {
-            logger.debug("Start to create destination directory.");
+            logger.trace("Start to create destination directory.");
             if (parentFile.mkdirs()) {
-                logger.debug("Created.");
+                logger.trace("Created.");
             }
         }
-        logger.debug("Checked.");
+        logger.trace("Checked.");
 
         ZipFile zipFile = new ZipFile(destFile);
-        logger.debug("Check directory to zip");
+        logger.trace("Check directory to zip");
         if (srcFile.isDirectory()) {
-            logger.debug("Adding file.");
+            logger.trace("Adding file.");
             zipFile.addFolder(srcFile);
         } else {
-            logger.debug("Adding directory to zip");
+            logger.trace("Adding directory to zip");
             zipFile.addFile(srcFile);
         }
-        logger.debug("Done.");
-        logger.debug("Checked.");
-        logger.debug("Zip operation finished");
+        logger.trace("Done.");
+        logger.trace("Checked.");
     }
 }

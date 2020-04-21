@@ -66,7 +66,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	@Override
 	public void execute() throws Exception {
-		logger.info("Ftp command initiliaze");
+		logger.trace("FtpCommand.execute started");
 		String user = getDefaultAttribute(USER_NAME, "");
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "21"));
@@ -78,19 +78,19 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 		if (StringUtils.isEmpty(type))
 			throw new MissedParameterException("A ftp type needs to be provided.");
 
-		logger.info(String.format(
+		logger.debug(String.format(
 				"Parameters: type %s, host %s, port %s, password %s, fromFile %s, toFile %s",
 				type, host, String.valueOf(port), password, fromFile, toFile));
 
 		if (DOWNLOAD.equalsIgnoreCase(type)) {
 			ftpDownload(host, port, user, password, fromFile, toFile);
+			logResponse("Ftp command finished download the file.");
 		}
 
 		if (UPLOAD.contentEquals(type)) {
 			ftpUpload(host, port, user, password, fromFile, toFile);
+			logResponse("Ftp command finished upload the file.");
 		}
-
-		logger.info("Ftp command finished");
 	}
 	
 	/**
@@ -106,6 +106,7 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	private void ftpUpload(String host, int port, String user, String password,
 			String fromFilePath, String toFilePath){
+		logger.trace("FtpCommand.ftpUpload started");
 		FTPClient ftpClient = new FTPClient();
 		try {
 			ftpClient.connect(host, port);
@@ -115,10 +116,10 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 			
 			File file = new File(fromFilePath);
 			InputStream inputStream = new FileInputStream(file);
-			logger.info("Uploading File");
+			logger.debug("Uploading File");
 			boolean done = ftpClient.storeFile(toFilePath, inputStream);
 			inputStream.close();
-			logger.info("Upload Completed : " + done);
+			logger.debug("Upload Completed : " + done);
 
 		} catch (IOException ex) {
 			logger.error(ex.getMessage());
@@ -145,8 +146,8 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 	 * @param fromFilePath the from file path
 	 * @param toFilePath the to file path
 	 */
-	private void ftpDownload(String host, int port, String user, String password,
-			String fromFilePath, String toFilePath) {
+	private void ftpDownload(String host, int port, String user, String password, String fromFilePath, String toFilePath) {
+		logger.trace("FtpCommand.ftpDownload started");
 		FTPClient ftpClient = new FTPClient();
 		try {
 			ftpClient.connect(host, port);
@@ -154,11 +155,11 @@ public class FtpCommand extends EncryptDecryptAbstractCommand {
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			
-			logger.info("Download File");
+			logger.trace("Download File");
 			OutputStream outputStream1 = new BufferedOutputStream(new FileOutputStream(toFilePath));
 	        boolean success = ftpClient.retrieveFile(fromFilePath, outputStream1);
 	        outputStream1.close();
-			logger.info("Download Completed : " + success);
+			logger.trace("Download Completed : " + success);
 
 		} catch (IOException ex) {
 			logger.error(ex.getMessage());

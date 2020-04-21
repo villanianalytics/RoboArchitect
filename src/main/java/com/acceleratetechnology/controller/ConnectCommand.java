@@ -37,10 +37,6 @@ import okhttp3.Response;
  */
 public class ConnectCommand extends EncryptDecryptAbstractCommand {
     /**
-     * Multiline format data connection method.
-     */
-    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
-    /**
      * Body of request attribute.
      */
     private static final String BODY = "/body";
@@ -73,10 +69,6 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     private static final String TOKEN = "/token";
     /**
-     * Need to add in header for connection method.
-     */
-    private static final String ACCEPT = "Accept";
-    /**
      * System logger.
      */
     private Logger logger = Logger.getLogger(ConnectCommand.class);
@@ -88,14 +80,6 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * Default HTTP method connection.
      */
     private static final String DEFAULT_HTTP_METHOD = "GET";
-    /**
-     * HTTP protocol settings.
-     */
-    private static final String HTTPS_PROTOCOLS = "https.protocols";
-    /**
-     * HTTP connection version.
-     */
-    private static final String TLSV_1_2 = "TLSv1.2";
     /**
      * Input file with JSON.
      */
@@ -115,11 +99,11 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     /**
      * Json filter attribute.
      */
-    public static final String JSON_PATH_PARAM = "/jsonPath";
+    public static final String JSON_PARAM = "/jsonPath";
     /**
      * Unsql filter attribute.
      */
-    public static final String UNSQL_PATH_PARAM = "/query";
+    public static final String UNSQL_PARAM = "/query";
     /**
      * Destination xlsx file command line parameter.
      */
@@ -170,7 +154,9 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      */
     @Override
     public void execute() throws IOException, MissedParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException {
-        String url = getAttribute(URL_PARAMETER);
+    	logger.trace("ConnectCommand.execute started");
+    	
+    	String url = getAttribute(URL_PARAMETER);
         if (url == null) {
             throw new MissedParameterException("You missed \"url\" in a config file. Please add it and then repeat.");
         }
@@ -213,12 +199,12 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
         HttpUtils httpUtil = createUtilsWithHeaders(url, user, pw, token, connectMethod);
         String response = getJSONResponse(httpUtil, restMethod, srcFile, body, connectMethod);
 
-        String jsonPath = getAttribute(JSON_PATH_PARAM);
+        String jsonPath = getAttribute(JSON_PARAM);
         if (jsonPath != null && !jsonPath.isEmpty()) {
             response = jsonFilter(jsonPath, response);
         }
         
-        String unSqlQuery = getAttribute(UNSQL_PATH_PARAM);
+        String unSqlQuery = getAttribute(UNSQL_PARAM);
         if (unSqlQuery != null && !unSqlQuery.isEmpty()) {
         	String destFile = getAttribute(DEST_FILE_PARAM);
             String delimiterAttr = getAttribute(DELIMITER);
@@ -239,9 +225,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
             response = unSqlFilter(unSqlQuery, response, destFile);
         }
         
-        if (StringUtils.isEmpty(jsonPath) && StringUtils.isEmpty(unSqlQuery)) {
-        	logger.info(response);
-        }
+        logResponse(response);
         
         String jsonFile = getAttribute(DEST_FILE_PARAM);
         if (jsonFile != null && !jsonFile.isEmpty()) {
@@ -250,12 +234,13 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
 
             logger.debug("Write response to file: " + jsonFile);
             FileUtils.write(file, String.valueOf(response), UTF_8);
-            logger.info("Done.");
+            logResponse("Response wrriten to file : " + jsonDir.getFileName());
         }
     }
     
     
     private HttpUtils createUtilsWithHeaders(String url, String user, String pw, String token, String connectionMethod) {
+    	logger.trace("ConnectCommand.createUtilsWithHeaders started");
     	HttpUtils httpUtil = new HttpUtils(url);
     	
     	if (user != null ) {
@@ -273,7 +258,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     
     
     private String getJSONResponse(HttpUtils httpUtil, HttpMethod restMethod, File sourceFile, String body, String connectionMethod) throws IOException {
-    	// create body 
+    	logger.trace("ConnectCommand.getJSONResponse started");
     	RequestBody requestBody = null;
     	if (sourceFile != null) {
     		requestBody = httpUtil.createBody(sourceFile);
@@ -305,7 +290,8 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @return formatted JSON.
      */
     public String prettyJsonFormatter(String response) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	logger.trace("ConnectCommand.prettyJsonFormatter started");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonElement element;
         String result;
         try {
@@ -326,10 +312,8 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @return Part of a JSON.
      */
     public String getJsonPath(String jsonBody, String jsonPath) {
-        logger.debug("Read Json body " + jsonBody + " jsonPath " + jsonPath);
-        String results = JsonPath.read(jsonBody, jsonPath).toString();
-        logger.debug("Done.");
-        return results;
+    	logger.trace("ConnectCommand.getJsonPath started");
+        return JsonPath.read(jsonBody, jsonPath).toString();
     }
 
     /**
@@ -340,9 +324,8 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @return Formatted part from JSON.
      */
     public String jsonFilter(String jsonPath, String json) {
-        String formattedMessage = prettyJsonFormatter(getJsonPath(json, jsonPath));
-        logger.info(formattedMessage);
-        return formattedMessage;
+    	logger.trace("ConnectCommand.jsonFilter started");
+        return prettyJsonFormatter(getJsonPath(json, jsonPath));
     }
     
     /**
@@ -355,6 +338,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
      * @throws MissedParameterException the missed parameter exception
      */
     public String unSqlFilter(String query, String json, String destFile) throws MissedParameterException {
+    	logger.trace("ConnectCommand.unSqlFilter started");
     	String results = "";
        
     	try {
@@ -391,6 +375,7 @@ public class ConnectCommand extends EncryptDecryptAbstractCommand {
     }
     
     private String readQueryFile(String filePath) throws IOException {
+    	logger.trace("ConnectCommand.readQueryFile started");
     	String query = FileUtils.readFileToString(Paths.get(filePath).toFile(), UTF_8);
     	
     	return query.replaceAll("\\r|\\n", "");

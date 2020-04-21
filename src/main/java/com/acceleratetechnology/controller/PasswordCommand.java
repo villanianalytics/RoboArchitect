@@ -30,10 +30,11 @@ public class PasswordCommand extends EncryptDecryptAbstractCommand {
 
     @Override
     public void execute() throws MissedParameterException, IOException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IllegalBlockSizeException, InvalidKeyException {
-        String passwordFile = getRequiredAttribute(PASSWORD_FILE_PARAMETER);
-        // If you want to change basic secret key, please uncomment the line below.
-        // setSECRET_BYTES("SecretKey".getBytes(UTF_8));
+    	logger.trace("PasswordCommand.execute started");
+    	
+    	String passwordFile = getRequiredAttribute(PASSWORD_FILE_PARAMETER);
+        // If you want to change basic secret key, please uncomment the line below.setSECRET_BYTES("SecretKey".getBytes(UTF_8));
         encrypt(passwordFile);
-        logger.info("Password was successfully encrypted.");
+        logResponse("Password was successfully encrypted.");
     }
 }

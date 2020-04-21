@@ -63,8 +63,10 @@ public class RAMainApplication {
                     Constructor constructor = init(commandArgs[0]);
                      AbstractCommand command = (AbstractCommand) (constructor.newInstance(new Object[]{commandArgs}));
                      logger = Logger.getLogger(RAMainApplication.class);
+                     logger.debug("The " + command.getClass().getSimpleName() + " has started.");
                      command.execute();
                      command.logCommands();
+                     logger.debug("The " + command.getClass().getSimpleName() + " ended");
                      
                      commands.clear();
                      if(i < args.length) {

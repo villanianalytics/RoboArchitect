@@ -135,7 +135,8 @@ public class EmailCommand extends EncryptDecryptAbstractCommand {
 
     @Override
     public void execute() throws IOException, MissedParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, MessagingException {
-        String subject = getFromConfOrAttribute(SUBJECT_CONFIG_PROPERTY, SUBJECT_PARAM);
+    	logger.trace("EmailCommand.execute started");
+    	String subject = getFromConfOrAttribute(SUBJECT_CONFIG_PROPERTY, SUBJECT_PARAM);
         String body = getFromConfOrAttribute(BODY_CONFIG_PROPERTY, BODY_PARAM);
         String password = getPassword();
 
@@ -167,6 +168,8 @@ public class EmailCommand extends EncryptDecryptAbstractCommand {
         }
 
         sendEmail(cType, smtpServer, Integer.parseInt(port), fromAddress, password, htmlBody, subject, body, attachment, fromAddress, toAddress, ccAddress, bccAddress);
+        
+        logResponse("Mail sent successfully!");
     }
 
     /**
@@ -189,7 +192,9 @@ public class EmailCommand extends EncryptDecryptAbstractCommand {
      * @throws MissedParameterException
      */
     private void sendEmail(String cType, String smtpServer, Integer port, String username, String password, String htmlBody, String subject, String body, String attachment, String fromAddress, String toAddress, String ccAddress, String bccAddress) throws MessagingException, MissedParameterException, FileNotFoundException {
-        final String user = username;
+    	logger.trace("EmailCommand.sendEmail started");
+    	
+    	final String user = username;
         final String pass = password;
 
         Properties props = new Properties();
@@ -257,13 +262,12 @@ public class EmailCommand extends EncryptDecryptAbstractCommand {
         }
 
         Transport.send(message);
-
-        logger.info("Mail sent successfully!");
     }
 
 
     public String getRequiredFromConfOrAttribute(String configKey, String attribute) throws MissedParameterException {
-        String value = getFromConfOrAttribute(configKey, attribute);
+    	logger.trace("EmailCommand.getRequiredFromConfOrAttribute started");
+    	String value = getFromConfOrAttribute(configKey, attribute);
         if (value == null) {
             throw new MissedParameterException("Attribute was missed. Please type \"" + configKey + "\" in a config file or \"" + attribute + "\" in a command.");
         }

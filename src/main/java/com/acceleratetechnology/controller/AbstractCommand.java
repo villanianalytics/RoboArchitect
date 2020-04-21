@@ -221,11 +221,21 @@ public abstract class AbstractCommand {
         return (value == null) ? defaultValue : value;
     }
     
+    protected void logResponse(String response) {
+    	logger.info(response);
+    }
+    
     public void logCommands() {
     	Set<String> unsedCommands = getUnUsedCommands();
     	
-    	if (unsedCommands.size() > 0) {
-    		logger.info("Unsed commands - " + unsedCommands.toString());
+    	if (!unsedCommands.isEmpty()) {
+    		logger.debug("Unsed commands - " + unsedCommands.toString());
+    	}
+    }
+    
+    public void logUsedCommands() {
+    	if (!usedAttributes.isEmpty()) {
+    		logger.debug("Used commands - " + usedAttributes.toString());
     	}
     }
     

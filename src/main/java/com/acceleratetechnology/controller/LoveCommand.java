@@ -14,7 +14,8 @@ public class LoveCommand extends AbstractCommand {
 
     @Override
     public void execute() {
-        logger.info("                                                                                                    \n" +
+    	logger.trace("LoveCommand.command started");
+        logResponse("                                                                                                    \n" +
                 "                                      ``..-:::////////::--..`                                       \n" +
                 "                               `.:/+oosssssssssssssssssssssssso++/-.`                               \n" +
                 "                         `-+:`/ossssssssssssssssssssssssssssssssssso+/`/+-                          \n" +

@@ -424,7 +424,7 @@ public class RAMainApplicationTest {
 
         String actual = outputStream.toString().trim();
 
-        Assert.assertEquals((expected + "\nJson filtering done."), actual);
+        Assert.assertEquals((expected), actual);
         outputStream.reset();
         System.setOut(out);
 
@@ -454,7 +454,7 @@ public class RAMainApplicationTest {
 
         String actual = outputStream.toString().trim();
 
-        Assert.assertEquals((expected + "\nUnSQL query done."), actual);
+        Assert.assertEquals((expected), actual);
         outputStream.reset();
         System.setOut(out);
 

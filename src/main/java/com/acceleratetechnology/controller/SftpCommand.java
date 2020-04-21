@@ -68,7 +68,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	@Override
 	public void execute() throws Exception {
-		logger.info("Sftp command initiliaze");
+		logger.trace("SftpCommand.execute operation start");
 		String user = getDefaultAttribute(USER_NAME, "");
 		String host = getDefaultAttribute(HOST, "");
 		int port = Integer.parseInt(getDefaultAttribute(PORT, "22"));
@@ -80,18 +80,18 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 		
 		if (StringUtils.isEmpty(type)) throw new MissedParameterException("A sftp type needs to be provided.");
 		
-		logger.info(String.format("Parameters: type %s, host %s, port %s, password %s, privateKeyLocation %s, fromFile %s, toFile %s",
+		logger.trace(String.format("Parameters: type %s, host %s, port %s, password %s, privateKeyLocation %s, fromFile %s, toFile %s",
 				type, host, String.valueOf(port), password, privateKeyLocation, fromFile, toFile));
 
 		if (DOWNLOAD.equalsIgnoreCase(type)) {
 			sftpDownload(host, port, user, password, privateKeyLocation, fromFile, toFile);
+			logResponse("Sftp download finished");
 		}
 		
 		if (UPLOAD.contentEquals(type)) {
 			sftpUpload(host, port, user, password, privateKeyLocation, fromFile, toFile);
+			logResponse("Sftp upload finished");
 		}
-		
-		logger.info("Sftp command finished");
 	}
 	
 	/**
@@ -107,6 +107,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 * @throws IOException 
 	 */
 	private Session setupJsch(int port, String host, String username, String password, String privateKeyLocation) throws JSchException {
+		logger.trace("SftpCommand.setupJsch operation start");
 	    JSch jsch = new JSch();
 	    if (!StringUtils.isEmpty(privateKeyLocation)) {
 	    	jsch.addIdentity(privateKeyLocation);
@@ -117,6 +118,8 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	    config.put("StrictHostKeyChecking", "no");
 	    jschSession.setConfig(config);
 	    if (!StringUtils.isEmpty(password)) jschSession.setPassword(password);
+	   
+	    logger.trace("sftp.setupJsch ended");
 	    return jschSession;
 	}
 	
@@ -135,7 +138,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	private void sftpUpload(String host, int port, String user, String password, String privateKeyLocation,
 			String fromFilePath, String toFilePath) throws JSchException, SftpException  {
-		
+		logger.trace("SftpCommand.sftpUpload operation start");
 		Session jschSession = setupJsch(port, host, user, password, privateKeyLocation);
 		jschSession.connect();
 		ChannelSftp channelSftp = (ChannelSftp) jschSession.openChannel("sftp");
@@ -166,6 +169,7 @@ public class SftpCommand extends EncryptDecryptAbstractCommand {
 	 */
 	private void sftpDownload(String host, int port, String user, String password, String privateKeyLocation,
 			String fromFilePath, String toFilePath) throws JSchException, SftpException  {
+		logger.trace("SftpCommand.sftpDownload operation start");
 		Session jschSession = setupJsch(port, host, user, password, privateKeyLocation);
 		jschSession.connect();
 		
