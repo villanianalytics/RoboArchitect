@@ -32,5 +32,5 @@ jobs:
           tags: true
           draft: false
           branches: "master"
-          tag_name: "v1.2.9"
+          tag_name: "v2.0.1"
           verbose: true
