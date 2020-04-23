@@ -30,7 +30,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./target/site/cobertura/cobertura.xml
+          file: ./target/site/cobertura/coverage.xml
       - name: Release
         uses: xresloader/upload-to-github-release@v1.1.1
         env:
