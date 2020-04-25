@@ -31,7 +31,7 @@ public class UnSqlCommand extends AbstractCommand {
     public static final String DEST_FILE_PARAM = "/destFile";
    
     /** The Constant QUERY_PATH_PARAM. */
-    public static final String QUERY_PATH_PARAM = "/query";
+    public static final String QUERY_PARAM = "/query";
     
     /** The Constant DELIMITER. */
     public static final String DELIMITER ="/delimiter";
@@ -85,8 +85,10 @@ public class UnSqlCommand extends AbstractCommand {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private void unsql() throws MissedParameterException, IOException {
+    	logger.trace("UnSqlCommand.unsql operation start");
+    	 
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
-        String query = getRequiredAttribute(QUERY_PATH_PARAM);
+        String query = getRequiredAttribute(QUERY_PARAM);
         String destFile = getAttribute(DEST_FILE_PARAM);
         String delimiterAttr = getAttribute(DELIMITER);
         String headersAttr = getAttribute(HEADERS);
@@ -105,7 +107,7 @@ public class UnSqlCommand extends AbstractCommand {
         }
         
         if (StringUtils.isEmpty(query)) {
-        	throw new MissedParameterException("Attribute " + QUERY_PATH_PARAM + " is empty.");
+        	throw new MissedParameterException("Attribute " + QUERY_PARAM + " is empty.");
         }
         
         if (query.endsWith(TEXT_FILE)) {
@@ -126,7 +128,9 @@ public class UnSqlCommand extends AbstractCommand {
      * @throws MissedParameterException the missed parameter exception
      */
     private void unSqlFilter(String srcFile, String query, String destFile) throws IOException, MissedParameterException {
-        String raw = FileUtils.readFileToString(Paths.get(srcFile).toFile(), UTF_8);
+    	logger.trace("UnSqlCommand.unSqlFilter operation start");
+        
+    	String raw = FileUtils.readFileToString(Paths.get(srcFile).toFile(), UTF_8);
         String results = getResults(raw, query, destFile);
       
         if (destFile != null && !destFile.isEmpty()) {
@@ -134,14 +138,14 @@ public class UnSqlCommand extends AbstractCommand {
             File file = destPath.toAbsolutePath().toFile();
             File destination = file.getParentFile();
             if (destination.exists()) {
-                logger.debug("Destination of a file " + destination + " does not exist so began to create it.");
+                logger.trace("Destination of a file " + destination + " does not exist so began to create it.");
                 boolean mkdir = destination.mkdirs();
-                logger.debug("Destination file directory was created: " + mkdir);
+                logger.trace("Destination file directory was created: " + mkdir);
             }
             FileUtils.write(file, results, UTF_8);
         }
         
-        logger.info("UnSQL query done.");
+        logResponse(results);
     }
     
     /**
@@ -152,6 +156,7 @@ public class UnSqlCommand extends AbstractCommand {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String readQueryFile(String filePath) throws IOException {
+    	logger.trace("UnSqlCommand.readQueryFile operation start");
     	String query = FileUtils.readFileToString(Paths.get(filePath).toFile(), UTF_8);
     	
     	return query.replaceAll("\\r|\\n", "");
@@ -167,6 +172,7 @@ public class UnSqlCommand extends AbstractCommand {
      * @throws UnSqlException the un sql exception
      */
     private String runQuery(String raw, String query, String destFile) throws UnSqlException {
+    	logger.trace("UnSqlCommand.runQuery operation start");
     	String results = "";
    
     	if (destFile != null && destFile.endsWith(XML_FILE)) {
@@ -205,6 +211,7 @@ public class UnSqlCommand extends AbstractCommand {
      * @throws MissedParameterException the missed parameter exception
      */
     private String getResults(String raw, String query, String destFile) throws MissedParameterException {
+    	logger.trace("UnSqlCommand.getResults operation start");
     	String results = "";
         
         try {
@@ -212,8 +219,6 @@ public class UnSqlCommand extends AbstractCommand {
 		} catch (UnSqlException e) {
 			throw new MissedParameterException(e.getMessage());
 		}
-        
-        logger.info(results);
         
         return results;
     }

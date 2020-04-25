@@ -21,7 +21,6 @@ public class QueryDelimCommand extends AbstractCommand {
     private static final String SRC_FILE = "/srcFile";
     private static final String DELIM = "/delim";
     private static final String QUERY = "/query";
-    private static final String QUERY_FILE = "/queryFile";
     private static final String DEST_FILE = "/destFile";
     private static final String SUPPRESS_HEADERS = "/suppressHeaders";
     private static final String SKIP_LINES = "/skipLines";
@@ -37,6 +36,8 @@ public class QueryDelimCommand extends AbstractCommand {
 
     @Override
     public void execute() throws MissedParameterException, IOException, SQLException, ClassNotFoundException {
+    	logger.trace("QueryDelimCommand.execute started");
+    	
         String srcFile = getRequiredAttribute(SRC_FILE);
         String delimStr = getDefaultAttribute(DELIM, DEFAULT_COMMA_DELIM);
         String query = getRequiredAttribute(QUERY);
@@ -55,7 +56,8 @@ public class QueryDelimCommand extends AbstractCommand {
 
 
     private void queryFile(String srcFile, char delim, String fileExtension, String fileQuery, String outputFile, String suppressHeaders, String skipLines, String skipDataLines) throws SQLException, IOException, ClassNotFoundException {
-        Class.forName(CsvDriver.class.getCanonicalName());
+        logger.trace("QueryDelimCommand.queryFile started");
+    	Class.forName(CsvDriver.class.getCanonicalName());
 
         Properties props = new Properties();
         props.put(SEPARATOR, delim);
@@ -74,21 +76,19 @@ public class QueryDelimCommand extends AbstractCommand {
 
         ResultSet results = stmt.executeQuery(fileQuery);
 
+        @Cleanup ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        @Cleanup Writer writerString = new OutputStreamWriter(stream);
+        @Cleanup CSVWriter writer = new CSVWriter(writerString);
+        writer.writeAll(results, true);
+        writer.flush();
 
-        if (results != null) {
-            @Cleanup ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            @Cleanup Writer writerString = new OutputStreamWriter(stream);
-            @Cleanup CSVWriter writer = new CSVWriter(writerString);
-            writer.writeAll(results, true);
-            writer.flush();
+        String result = stream.toString();
 
-            String result = stream.toString();
-
-            if (outputFile != null) {
-                FileUtils.write(Paths.get(outputFile).toFile(), result, UTF_8);
-            } else {
-                logger.info(result);
-            }
+        if (outputFile != null) {
+            FileUtils.write(Paths.get(outputFile).toFile(), result, UTF_8);
+            logResponse("Finished with success, result written to " + Paths.get(outputFile).getFileName());
+        } else {
+        	logResponse(result);
         }
     }
 }

@@ -32,7 +32,7 @@ public class JsonPathCommand extends AbstractCommand {
     /**
      * Json filter attribute.
      */
-    public static final String JSON_PATH_PARAM = "/jsonPath";
+    public static final String JSON_PARAM = "/jsonPath";
 
     @Command("-jsonpath")
     public JsonPathCommand(String[] args) throws IOException, MissedParameterException {
@@ -51,8 +51,9 @@ public class JsonPathCommand extends AbstractCommand {
      * @throws IOException              thrown in case of an I/O error
      */
     private void jsonpath() throws MissedParameterException, IOException {
+    	logger.trace("JsonPathCommand.jsonpath started");
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
-        String jsonPath = getRequiredAttribute(JSON_PATH_PARAM);
+        String jsonPath = getRequiredAttribute(JSON_PARAM);
         String destFile = getAttribute(DEST_FILE_PARAM);
 
         jsonFileFilter(srcFile, jsonPath, destFile);
@@ -67,6 +68,7 @@ public class JsonPathCommand extends AbstractCommand {
      * @throws IOException thrown in case of an I/O error
      */
     private void jsonFileFilter(String srcFile, String jsonPath, String destFile) throws IOException {
+    	logger.trace("JsonPathCommand.jsonFileFilter started");
         String json = FileUtils.readFileToString(Paths.get(srcFile).toFile(), UTF_8);
         String formattedJson = jsonFilter(jsonPath, json);
         if (destFile != null && !destFile.isEmpty()) {
@@ -80,26 +82,28 @@ public class JsonPathCommand extends AbstractCommand {
             }
 
             FileUtils.write(file, formattedJson, UTF_8);
+            logger.debug(formattedJson);
+            logResponse("The result has printed to file " + destPath.getFileName());
+        } else {
+        	logResponse(formattedJson);
         }
-        logger.info("Json filtering done.");
     }
 
     private String prettyJsonFormatter(String response) {
+    	logger.trace("JsonPathCommand.prettyJsonFormatter started");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonElement element = JsonParser.parseString(response);
         return gson.toJson(element);
     }
 
     private String getJsonPath(String jsonBody, String jsonPath) {
-        logger.debug("Read Json body " + jsonBody + " jsonPath " + jsonPath);
+    	logger.trace("JsonPathCommand.getJsonPath started");
         String results = JsonPath.read(jsonBody, jsonPath).toString();
-        logger.debug("Done.");
         return results;
     }
 
     private String jsonFilter(String jsonPath, String json) {
-        String formattedMessage = prettyJsonFormatter(getJsonPath(json, jsonPath));
-        logger.info(formattedMessage);
-        return formattedMessage;
+    	logger.trace("JsonPathCommand.jsonFilter started");
+        return prettyJsonFormatter(getJsonPath(json, jsonPath));
     }
 }

@@ -38,6 +38,11 @@ import lombok.Cleanup;
  * Create, add or run SQL requests in SQLite Database.
  */
 public class SqlCommand extends AbstractCommand {
+	
+	/**
+	 * System logger.
+	 */
+	private Logger logger = Logger.getLogger(SqlCommand.class);
 	/**
 	 * Run SQL command option. It could be {@link #CREATE_DB_OPTION},
 	 * {@link #IMPORT_TABLE_OPTION}, {@link #QUERY_DB_OPTION}.
@@ -124,15 +129,6 @@ public class SqlCommand extends AbstractCommand {
 	 */
 	private static final String DELIM = "delim";
 	/**
-	 * String data type. Need to indicate Strings in Database.
-	 */
-	private static final String VARCHAR_2_255 = " VARCHAR2(255)";
-
-	/**
-	 * String data type. Need to indicate Strings in Database.
-	 */
-	private static final String VARCHAR_SQLSERVER = " VARCHAR(255)";
-	/**
 	 * Double quotes need to surround data from csv file.
 	 */
 	private static final String DOUBLE_QUOTES = "\"";
@@ -140,20 +136,11 @@ public class SqlCommand extends AbstractCommand {
 	 * SQLite package directory.
 	 */
 	private static final String JDBC_SQLITE = "jdbc:sqlite:";
-	/**
-	 * JDBC Connection String
-	 */
-	public static String jdbcString;
 
 	/**
 	 * Default true answer.
 	 */
 	private static final String DEFAULT_CONN = "SQLITE";
-
-	/**
-	 * System logger.
-	 */
-	private Logger logger = Logger.getLogger(ConnectCommand.class);
 
 	@Command("-sql")
 	public SqlCommand(String[] args) throws IOException, MissedParameterException {
@@ -162,13 +149,15 @@ public class SqlCommand extends AbstractCommand {
 
 	@Override
 	public void execute() throws MissedParameterException, SQLException, IOException, ClassNotFoundException {
+    	logger.trace("SqlCommand.execute operation start");
+
 		String opCmd = getRequiredAttribute(OP_PARAMETER);
 		String opDB = getRequiredAttribute(DB_NAME_PARAMETER);
 		String dbConnection = getDefaultAttribute(CONN_PARAMETER, DEFAULT_CONN);
 		
 		if (dbConnection.equalsIgnoreCase("sqlite")) {
 			File db = Paths.get(opDB).toAbsolutePath().toFile();
-			logger.debug("File path is created: " + db.getParentFile().mkdirs());
+			logger.trace("File path is created: " + db.getParentFile().mkdirs());
 			opDB = db.getCanonicalPath();
 			dbConnection = JDBC_SQLITE + opDB;
 		}
@@ -201,7 +190,8 @@ public class SqlCommand extends AbstractCommand {
 				if (queryFile.exists() && queryFile.isFile()) {
 					query = FileUtils.readFileToString(queryFile, UTF_8);
 				}
-			} catch (InvalidPathException ignored) {
+			} catch (InvalidPathException e) {
+				logger.trace(e.getMessage());
 			}
 
 			HashMap<String, String> outFile = new HashMap<>();
@@ -227,22 +217,23 @@ public class SqlCommand extends AbstractCommand {
 	}
 
 	private boolean isTrue(String returnString) {
+		logger.trace("SqlCommand.isTrue operation start");
 		return returnString.equalsIgnoreCase("Y") || returnString.equalsIgnoreCase("YES")
 				|| returnString.equalsIgnoreCase("TRUE") || returnString.equalsIgnoreCase("T")
 				|| returnString.equals("1");
 	}
 
 	public void createDB(ApplicationJdbc jdbc, String dbName) throws SQLException, ClassNotFoundException {
-		logger.debug("Creating database " + dbName);
+		logger.trace("SqlCommand.createDB operation start");
 		jdbc.createDb(dbName);
-		logger.info("Successfully created database");
+		logResponse("Successfully created database " + dbName);
 	}
 
-	public void executeQuery(ApplicationJdbc jdbc, String dbName, String query, Map<String, String> outFile,
-			boolean header) throws IOException, SQLException, ClassNotFoundException {
-		logger.debug("Executing " + query);
+	public void executeQuery(ApplicationJdbc jdbc, String dbName, String query, Map<String, String> outFile, boolean header) throws IOException, SQLException, ClassNotFoundException {
+		logger.trace("SqlCommand.executeQuery operation start");
+		logger.trace("Executing " + query);
 		List<String[]> results = jdbc.executeQuery(dbName, query);
-		logger.debug("Statement Executed");
+		logger.trace("Statement Executed");
 
 		boolean printHeader;
 		@Cleanup
@@ -251,7 +242,7 @@ public class SqlCommand extends AbstractCommand {
 		Writer writerString = null;
 		String delim;
 		if (outFile == null || outFile.isEmpty()) {
-			logger.debug("No output file specified");
+			logger.trace("No output file specified");
 			printHeader = header;
 			stream = new ByteArrayOutputStream();
 			writerString = new OutputStreamWriter(stream);
@@ -259,7 +250,7 @@ public class SqlCommand extends AbstractCommand {
 		} else {
 			printHeader = header;
 			File file = Paths.get(outFile.get(FILE)).toAbsolutePath().toFile();
-			logger.debug("File path was created: " + file.getParentFile().mkdirs());
+			logger.trace("File path was created: " + file.getParentFile().mkdirs());
 			writerString = new FileWriter(file);
 			delim = outFile.get(DELIM);
 		}
@@ -267,14 +258,17 @@ public class SqlCommand extends AbstractCommand {
 		writeOutput(results, printHeader, writerString, delim.charAt(0));
 
 		if (stream != null) {
-			logger.info(stream);
+			logResponse(stream.toString());
+		} else {
+			logResponse("Query execute with success, no results found");
 		}
 	}
 	
 	private void writeOutput(List<String[]> results, boolean printHeader, Writer writerString, char delim) throws IOException {
+		logger.trace("SqlCommand.writeOutput operation start");
 		try (CSVWriter myCsvOutput = new CSVWriter(writerString, delim, NO_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER, DEFAULT_LINE_END)) {	
 			int numResultCols = results.get(0).length;
-			logger.debug(numResultCols);
+			logger.trace(numResultCols);
 			String[] csvRow = new String[numResultCols];
 			if (printHeader) {
 				for (int i = 0; i < numResultCols; i++) {
@@ -301,13 +295,14 @@ public class SqlCommand extends AbstractCommand {
 	}
 
 	public void executeUpdate(ApplicationJdbc jdbc, String dbName, String query) throws SQLException, ClassNotFoundException {
-		logger.debug("Executing " + query);
+		logger.trace("SqlCommand.executeUpdate operation start");
 		jdbc.executeUpdate(dbName, query);
-		logger.debug("Statement Executed");
+		logResponse("Statement Executed with success");
 	}
 
 	public void importTable(ApplicationJdbc applicationJdbc, String dbName, String tableName, String fileName,
 			char delim, String updateMode) throws IOException, SQLException, ClassNotFoundException {
+		logger.trace("SqlCommand.importTable operation start");
 		int columnCount = 0;
 
 		CSVParser parser = new CSVParserBuilder().withSeparator(delim).build();
@@ -329,7 +324,6 @@ public class SqlCommand extends AbstractCommand {
 				if (i != (columnCount - 1)) {
 					tableCreate.append(DEFAULT_DELIM);
 				}
-
 			}
 
 			applicationJdbc.createTable(dbName, tableName, tableCreate.toString());
@@ -341,5 +335,7 @@ public class SqlCommand extends AbstractCommand {
 			applicationJdbc.executeUpdate(dbName,
 					"INSERT INTO " + tableName + " VALUES (" + "'" + String.join("','", nextRecord) + "'" + ")");
 		}
+		
+		logResponse("Import completed with success");
 	}
 }

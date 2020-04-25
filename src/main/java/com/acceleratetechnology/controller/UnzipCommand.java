@@ -38,7 +38,7 @@ public class UnzipCommand extends AbstractCommand {
         String dest = getDefaultAttribute(DEST_DIR_PARAM,"");
 
         unzip(srcFile, dest);
-        logger.info("Unzipped.");
+        logResponse("Unzipped.");
     }
 
     /**
@@ -49,22 +49,22 @@ public class UnzipCommand extends AbstractCommand {
      * @throws ZipException Throws when zip file wrong or have a password.
      */
     private void unzip(String zipFilePath, String destDir) throws ZipException {
-        logger.debug("Unzip operation start");
+        logger.trace("UnzipCommand.Unzip operation start");
         Path path = Paths.get(zipFilePath);
         Path dirPath = Paths.get(destDir);
         File dir = dirPath.toAbsolutePath().toFile();
-        logger.debug("Check if destination directory \"" + destDir + "\" exists.");
+        logger.trace("Check if destination directory \"" + destDir + "\" exists.");
         if (!dir.exists()) {
-            logger.debug("Destination directory doesn't exist, so it starts to create it.");
+            logger.trace("Destination directory doesn't exist, so it starts to create it.");
             boolean mkdirs = dir.mkdirs();
-            logger.debug("Directory created: " + mkdirs + " Done.");
+            logger.trace("Directory created: " + mkdirs + " Done.");
         }
-        logger.debug("Opens zip file \"" + zipFilePath + "\".");
+        logger.trace("Opens zip file \"" + zipFilePath + "\".");
         ZipFile zipFile = new ZipFile(path.toFile());
-        logger.debug("Done.");
-        logger.debug("Start to unzip file.");
+        logger.trace("Done.");
+        logger.trace("Start to unzip file.");
         zipFile.extractAll(dir.getPath());
-        logger.debug("Done.");
-        logger.debug("Unzip operation finished");
+        logger.trace("Done.");
+        logger.trace("UnzipCommand.Unzip operation finished");
     }
 }

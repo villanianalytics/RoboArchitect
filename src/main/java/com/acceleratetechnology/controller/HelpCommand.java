@@ -66,6 +66,7 @@ public class HelpCommand extends AbstractCommand {
 
     @Override
     public void execute() {
+    	logger.trace("HelpCommand.execute started");
         logger.info(CONVERT);
         logger.info(UNZIP);
         logger.info(ZIP);

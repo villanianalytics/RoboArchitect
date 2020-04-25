@@ -65,6 +65,7 @@ public class ConvertCommand extends AbstractCommand {
 
     @Override
     public void execute() throws MissedParameterException, IOException {
+    	logger.trace("ConvertCommand.execute started");
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
         String extension = FilenameUtils.getExtension(srcFile);
 
@@ -90,7 +91,6 @@ public class ConvertCommand extends AbstractCommand {
         String sheetName = getDefaultAttribute(SHEET_NAME_PARAM, DEFAULT_SHEET_NAME);
 
         if (extension.equals("csv") || extension.equals("txt")) {
-            String destExtension = FilenameUtils.getExtension(destFile);
             convertCSVFile(srcFile, destFile, delim, sheetName);
         } else if (extension.equals("xlsx")) {
             convertXLSXFile(srcFile, sheetName, destFile, delim);
@@ -110,50 +110,51 @@ public class ConvertCommand extends AbstractCommand {
      * @throws IOException Throws if source file is incorrect.
      */
     private void convertCSVFile(String srcCSVFile, String destXLSXFile, char delim, String sheetName) throws IOException {
-        logger.debug("Create XLSX file with " + sheetName + "sheetname.");
+    	logger.trace("ConvertCommand.convertCSVFile started");
+    	logger.trace("Create XLSX file with " + sheetName + "sheetname.");
         @Cleanup XSSFWorkbook workBook = new XSSFWorkbook();
         POIXMLProperties xmlProps = workBook.getProperties();
         POIXMLProperties.CoreProperties coreProps =  xmlProps.getCoreProperties();
         coreProps.setCreator("RoboArchitect by Villani Analytics");
         XSSFSheet sheet = workBook.createSheet(sheetName);
-        logger.debug("File created.");
+        logger.trace("File created.");
 
         String currentLine;
         int rowNum = 0;
-        logger.debug("Opening source file.");
+        logger.trace("Opening source file.");
         Path path = Paths.get(srcCSVFile);
         @Cleanup Scanner fileReader = new Scanner(path.toFile());
-        logger.debug("Opened.");
+        logger.trace("Opened.");
 
-        logger.debug("Start parsing CSV file.");
+        logger.trace("Start parsing CSV file.");
         while (fileReader.hasNext()) {
             currentLine = fileReader.nextLine();
-            logger.debug("Start split " + currentLine + " line by \"" + delim + "\" delimiter.");
+            logger.trace("Start split " + currentLine + " line by \"" + delim + "\" delimiter.");
             String[] cells = currentLine.split(delim + "(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-            logger.debug("Split.");
+            logger.trace("Split.");
 
-            logger.debug("Create " + (rowNum + 1) + " row in XLSX file.");
+            logger.trace("Create " + (rowNum + 1) + " row in XLSX file.");
             XSSFRow currentRow = sheet.createRow(rowNum);
-            logger.debug("Created.");
+            logger.trace("Created.");
 
-            logger.debug("Start adding split data to row.");
+            logger.trace("Start adding split data to row.");
             for (int i = 0; i < cells.length; i++) {
-                logger.debug("Start creating " + i + " cell and put there " + cells[i] + " value.");
+                logger.trace("Start creating " + i + " cell and put there " + cells[i] + " value.");
                 currentRow.createCell(i).setCellValue(cells[i]);
-                logger.debug("Done.");
+                logger.trace("Done.");
             }
             rowNum++;
         }
-        logger.debug("Parsed finished.");
+        logger.trace("Parsed finished.");
 
-        logger.debug("Create and write to destination \"" + destXLSXFile + "\" file.");
+        logger.trace("Create and write to destination \"" + destXLSXFile + "\" file.");
         Path destination = Paths.get(destXLSXFile);
         File destinationFile = destination.toAbsolutePath().toFile();
         destinationFile.getParentFile().mkdirs();
 
         @Cleanup FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
         workBook.write(fileOutputStream);
-        logger.debug("Done.");
+        logger.trace("Done.");
     }
 
     /**
@@ -166,6 +167,8 @@ public class ConvertCommand extends AbstractCommand {
      * @throws IOException Throws if source file is incorrect.
      */
     public void convertXLSXFile(String srcXLSX, String srcSheet, String targetFile, char delim) throws IOException {
+    	logger.trace("ConvertCommand.convertXLSXFile started");
+    	
         @Cleanup FileInputStream input_document = new FileInputStream(Paths.get(srcXLSX).toFile());
         @Cleanup XSSFWorkbook my_xls_workbook = new XSSFWorkbook(input_document);
 
@@ -175,7 +178,7 @@ public class ConvertCommand extends AbstractCommand {
         file.getParentFile().mkdirs();
 
         @Cleanup FileWriter my_csv = new FileWriter(file);
-        CSVWriter my_csv_output = new CSVWriter(my_csv, delim,
+        @Cleanup CSVWriter my_csv_output = new CSVWriter(my_csv, delim,
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                 CSVWriter.DEFAULT_LINE_END);

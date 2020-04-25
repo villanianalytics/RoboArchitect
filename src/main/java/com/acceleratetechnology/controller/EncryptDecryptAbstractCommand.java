@@ -23,7 +23,6 @@ import java.util.Base64;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-// TODO: Auto-generated Javadoc
 /**
  * Encrypt and decrypt password by using AES algorithm.
  */
@@ -57,7 +56,7 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
     /**
      * Secret key.
      */
-    private static SecretKeySpec secretKey;
+    private SecretKeySpec secretKey;
     /**
      * Password field in connect property file.
      */
@@ -89,7 +88,8 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      * @throws NoSuchAlgorithmException thrown when a particular cryptographic algorithm is requested but is not available in the environment.
      */
     public void setKey(byte[] myKey) throws NoSuchAlgorithmException {
-        MessageDigest sha;
+    	logger.trace("EncryptDecryptAbstractCommand.setKey started");
+    	MessageDigest sha;
 
         sha = MessageDigest.getInstance(ALGORITHM);
         myKey = sha.digest(myKey);
@@ -112,7 +112,8 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      *                                   or if this encryption algorithm is unable to process the input data provided.
      */
     public void encrypt(String passwordDestinationFile) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException {
-        Console console = System.console();
+    	logger.trace("EncryptDecryptAbstractCommand.encrypt started");
+    	Console console = System.console();
 
         logger.info("Please enter your password and press Enter:");
         if (console == null) {
@@ -130,14 +131,14 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
         String encryptedPSWD = Base64.getEncoder().encodeToString(cipher.doFinal(password.getBytes(UTF_8)));
         logger.debug("Password encrypted.");
 
-        logger.debug("Start writing to file \"" + passwordDestinationFile + "\".");
+        logger.trace("Start writing to file \"" + passwordDestinationFile + "\".");
         Path path = Paths.get(passwordDestinationFile);
         File passwordFile = path.toAbsolutePath().toFile();
 
         passwordFile.getParentFile().mkdirs();
 
         FileUtils.write(passwordFile, encryptedPSWD, UTF_8);
-        logger.debug("Done.");
+        logResponse("Done.");
     }
 
     /**
@@ -156,13 +157,15 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      * @throws IOException               thrown in case of an I/O error
      */
     public String decrypt(File passwordFile) throws BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        logger.debug("Read password from a file.");
+    	logger.trace("EncryptDecryptAbstractCommand.decrypt started");
+    	logger.debug("Read password from a file.");
         String password = FileUtils.readFileToString(passwordFile, UTF_8);
         logger.debug("Done.");
         logger.debug("Start to decrypt.");
         setKey(SECRET_BYTES);
         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
+ 
         return new String(cipher.doFinal(Base64.getDecoder().decode(password)));
     }
 
@@ -182,7 +185,8 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      * @throws IOException               thrown in case of an I/O error
      */
     public String getPassword() throws MissedParameterException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, IOException {
-        String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
+    	logger.trace("EncryptDecryptAbstractCommand.getPassword() started");
+    	String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
 
         String password;
         if (passwordFile == null) {
@@ -216,7 +220,8 @@ public abstract class EncryptDecryptAbstractCommand extends AbstractCommand {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public String getPassword(String defaultValue) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException, IOException {
-        String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
+    	logger.trace("EncryptDecryptAbstractCommand.getPassword(String) started");
+    	String passwordFile = getAttribute(PASSWORD_FILE_PARAM);
 
         String password;
         if (passwordFile == null) {
