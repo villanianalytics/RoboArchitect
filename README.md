@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/villanianalytics/RoboArchitect/branch/master/graph/badge.svg)](https://codecov.io/gh/https://codecov.io/gh/villanianalytics/RoboArchitect)
+[![codecov](https://codecov.io/gh/villanianalytics/RoboArchitect/branch/master/graph/badge.svg)](https://codecov.io/gh/villanianalytics/RoboArchitect)
 
 # RoboArchitect
  RoboArchitect is a command-line application that can help you with zipping and unzipping files, convert from
