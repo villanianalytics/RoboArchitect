@@ -121,9 +121,9 @@ public class RAMainApplicationTest {
      * Path to file which is expected.
      */
     public static Path EXPECTED_FILE_PATH;
-    private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    private PrintStream out = new PrintStream(outputStream);
-    private PrintStream originOut = new PrintStream(System.out);
+    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    private final PrintStream out = new PrintStream(outputStream);
+    private final PrintStream originOut = new PrintStream(System.out);
 
     public static String csvFile = "1,2,3,4,5,6,7,8,9\n" +
                                    "a,b,c,d,e,f,g,h,i\n" +
@@ -220,7 +220,6 @@ public class RAMainApplicationTest {
         testPassword();
     }
 
-  
     public void connectTest() throws Exception {
         String command = "-connect /destFile=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "test" + File.separator + "jsonResponse.json\" /config=\"src" + File.separator + "test" + File.separator + "resources" + File.separator + "config.properties\"";
         testConnect(command);
@@ -377,6 +376,50 @@ public class RAMainApplicationTest {
 
         testInvalidCommand("-connect", "You missed \"url\" in a config file. Please add it and then repeat.");
     }
+
+//    @Test
+//    public void hierarchyTest() throws IOException {
+//        String fs=System.getProperty("file.separator");
+//        String src="src" + fs + "test" +fs + "resources" + fs + "source_pc.csv";
+//        String dest="src" + fs + "test" + fs + "resources" + fs + "output_lb.csv";
+//        testHierarchy(src, dest,"4");
+//    }
+//    private void testHierarchy(String srcFile, String destFile,String totalAttrib) throws IOException {
+//        String fs=System.getProperty("file.separator");
+//        Path srcPCFilePath = Paths.get(srcFile);
+//        Path destLBFilePath = Paths.get(destFile);
+//        Path outputPCFilePath=Paths.get("src" + fs + "test" + fs + "resources" + fs + "output_pc.csv");
+//
+//
+//        RAMainApplication.main(Commandline.translateCommandline("-hierarchy /srcFile=\"" + srcPCFilePath.toAbsolutePath() + "\" /destFile=\"" + destLBFilePath.toAbsolutePath() +"\""));
+//
+//        File file = destLBFilePath.toFile();
+//        assertTrue(file.exists());
+//
+//        // converting back
+//        RAMainApplication.main(Commandline.translateCommandline("-hierarchy /srcFile=\"" + destLBFilePath.toAbsolutePath() + "\" /destFile=\"" + outputPCFilePath.toAbsolutePath() + "\" /convertType=\"pc\" /totalAttrib=\""+totalAttrib+"\""));
+//
+//        file = outputPCFilePath.toFile();
+//        assertTrue(file.exists());
+//
+//        //assertEquals(FileUtils.readLines(outputPCFilePath.toFile()).size(), FileUtils.readLines(srcPCFilePath.toFile()).size());
+//
+//
+//        Properties properties = new Properties();
+//        @Cleanup FileReader reader = new FileReader(Paths.get("src/main/resources/log4j.properties").toFile());
+//        properties.load(reader);
+//        PropertyConfigurator.configure(properties);
+//
+//        File recourseCSV = Paths.get("src/test/resources/source_pc.csv").toFile();
+//
+//        if (!destLBFilePath.toFile().equals(recourseCSV)) {
+//            FileUtils.deleteQuietly(destLBFilePath.toFile());
+//        }
+//        if (!outputPCFilePath.toFile().equals(recourseCSV)) {
+//            FileUtils.deleteQuietly(outputPCFilePath.toFile());
+//        }
+//        cleanDirectory();
+//    }
 
     @Test
     public void testSQLiteCreate() throws IOException {
