@@ -14,6 +14,8 @@ public class HelpCommand extends AbstractCommand {
             "/sheetname=\"SHEET_NAME\" [/log=\"output.txt\"]\n";
     private static final String UNZIP = "-unzip             Unzip .zip file\n\n\t" +
             "/srcFile=\"SOURCE_FILE\" /destDir=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
+    private static final String DECOMPRESS = "-decompress             Generic decompresser\n\n\t" +
+            "/src=\"SOURCE_FILE\" /destFile=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
     private static final String ZIP = "-zip             Zip file or directory\n\n\t" +
             "/src=\"SOURCE_FILE\" /destFile=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
     private static final String PASSWORD = "-password             Write encrypt password to file\n\n\t" +
@@ -68,6 +70,7 @@ public class HelpCommand extends AbstractCommand {
     public void execute() {
     	logger.trace("HelpCommand.execute started");
         logger.info(CONVERT);
+        logger.info(DECOMPRESS);
         logger.info(UNZIP);
         logger.info(ZIP);
         logger.info(PASSWORD);
