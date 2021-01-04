@@ -1,17 +1,6 @@
 package com.acceleratetechnology.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import com.acceleratetechnology.controller.exceptions.MissedParameterException;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -24,9 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-
-import net.lingala.zip4j.exception.ZipException;
+import java.io.*;
 
 public class DecompressCommand extends AbstractCommand {
     
@@ -41,7 +28,7 @@ public class DecompressCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute() throws MissedParameterException, ZipException {
+    public void execute() throws MissedParameterException {
     	String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
         String dest = getDefaultAttribute(DEST_DIR_PARAM, "");
         
