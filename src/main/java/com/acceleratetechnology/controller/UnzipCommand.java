@@ -1,8 +1,10 @@
 package com.acceleratetechnology.controller;
 
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import net.lingala.zip4j.ZipFile;
+import com.acceleratetechnology.utils.Compressors;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -37,7 +39,12 @@ public class UnzipCommand extends AbstractCommand {
         String srcFile = getRequiredAttribute(SRC_FILE_PARAM);
         String dest = getDefaultAttribute(DEST_DIR_PARAM,"");
 
-        unzip(srcFile, dest);
+        try {
+            unzip(srcFile, dest);
+        } catch (Exception e) {
+            logger.error("Error : " + e.getMessage());
+        }
+
         logResponse("Unzipped.");
     }
 
@@ -48,9 +55,8 @@ public class UnzipCommand extends AbstractCommand {
      * @param destDir     Destination directory.
      * @throws ZipException Throws when zip file wrong or have a password.
      */
-    private void unzip(String zipFilePath, String destDir) throws ZipException {
+    private void unzip(String zipFilePath, String destDir) throws IOException, MissedParameterException, CompressorException, ArchiveException {
         logger.trace("UnzipCommand.Unzip operation start");
-        Path path = Paths.get(zipFilePath);
         Path dirPath = Paths.get(destDir);
         File dir = dirPath.toAbsolutePath().toFile();
         logger.trace("Check if destination directory \"" + destDir + "\" exists.");
@@ -59,11 +65,9 @@ public class UnzipCommand extends AbstractCommand {
             boolean mkdirs = dir.mkdirs();
             logger.trace("Directory created: " + mkdirs + " Done.");
         }
-        logger.trace("Opens zip file \"" + zipFilePath + "\".");
-        ZipFile zipFile = new ZipFile(path.toFile());
-        logger.trace("Done.");
-        logger.trace("Start to unzip file.");
-        zipFile.extractAll(dir.getPath());
+
+        Compressors.decompress(zipFilePath, destDir);
+
         logger.trace("Done.");
         logger.trace("UnzipCommand.Unzip operation finished");
     }

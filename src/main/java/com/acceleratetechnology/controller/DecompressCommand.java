@@ -1,19 +1,13 @@
 package com.acceleratetechnology.controller;
 
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import org.apache.commons.compress.archivers.ArchiveEntry;
+import com.acceleratetechnology.utils.Compressors;
 import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.compressors.CompressorException;
-import org.apache.commons.compress.compressors.CompressorInputStream;
-import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.utils.FileNameUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class DecompressCommand extends AbstractCommand {
     
@@ -48,37 +42,8 @@ public class DecompressCommand extends AbstractCommand {
     }
 
     private void decompress(String srcFile, String dest) throws IOException, ArchiveException, CompressorException {
-    	ArchiveInputStream ais = null;
-        
-    	ArchiveStreamFactory asf = new ArchiveStreamFactory();
-       
-        String extension = FileNameUtils.getExtension(srcFile);
-        FileInputStream fis = new FileInputStream(new File(srcFile));
-        
-        if (extension.toLowerCase().endsWith("tgz") || extension.toLowerCase().endsWith("gz")) {
-        	CompressorInputStream cis = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis);
-        	ais = asf.createArchiveInputStream(new BufferedInputStream(cis));
-        } else {
-        	ais = asf.createArchiveInputStream(fis);
-        }
-        
-        File outputFile = new File(dest);
-        if (!outputFile.exists())
-            outputFile.mkdirs();
-        
-        ArchiveEntry nextEntry;
-        while ((nextEntry = ais.getNextEntry()) != null) {
-            File ftemp = new File(dest, nextEntry.getName());
-            if (nextEntry.isDirectory()) {
-                ftemp.mkdir();
-            } else {
-                FileOutputStream fos = FileUtils.openOutputStream(ftemp);
-                IOUtils.copy(ais, fos);
-                fos.close();
-            }
-        }
-        ais.close();
-        fis.close();
+        logger.info("Decompress started");
+        Compressors.decompress(srcFile, dest);
+        logger.info("Decompress finished");
     }
-
 }
