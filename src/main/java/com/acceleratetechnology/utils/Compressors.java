@@ -93,10 +93,10 @@ public class Compressors {
         FileInputStream fis = new FileInputStream(new File(srcFile));
 
         if (extension.toLowerCase().endsWith("tgz") || extension.toLowerCase().endsWith("gz")) {
-            CompressorInputStream cis = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis);
+            CompressorInputStream cis = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, new BufferedInputStream(fis));
             ais = asf.createArchiveInputStream(new BufferedInputStream(cis));
         } else {
-            ais = asf.createArchiveInputStream(fis);
+            ais = asf.createArchiveInputStream(new BufferedInputStream(fis));
         }
 
         File outputFile = new File(dest);
