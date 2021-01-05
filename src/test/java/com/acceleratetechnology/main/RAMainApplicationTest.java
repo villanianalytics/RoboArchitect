@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
+import com.acceleratetechnology.utils.Compressors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.HttpEntity;
@@ -49,7 +50,7 @@ import lombok.Cleanup;
  * End to end test of RARobotUtilities.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({System.class, FileUtils.class, EncryptDecryptAbstractCommand.class, HttpClientBuilder.class, ConnectCommand.class, EntityUtils.class})
+@PrepareForTest({System.class, FileUtils.class, EncryptDecryptAbstractCommand.class, HttpClientBuilder.class, ConnectCommand.class, Compressors.class, EntityUtils.class})
 @PowerMockIgnore({"javax.crypto.*", "javax.management.*"})
 public class RAMainApplicationTest {
     static {
