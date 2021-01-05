@@ -33,7 +33,7 @@ public class ZipCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute() throws MissedParameterException, ZipException {
+    public void execute() throws MissedParameterException {
         String src = getRequiredAttribute(SRC);
         String dest = getRequiredAttribute(DEST_FILE_PARAM);
 
