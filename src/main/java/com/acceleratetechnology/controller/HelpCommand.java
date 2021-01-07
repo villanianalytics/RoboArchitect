@@ -14,6 +14,12 @@ public class HelpCommand extends AbstractCommand {
             "/sheetname=\"SHEET_NAME\" [/log=\"output.txt\"]\n";
     private static final String UNZIP = "-unzip             Unzip .zip file\n\n\t" +
             "/srcFile=\"SOURCE_FILE\" /destDir=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
+    private static final String FERP = "-ferp             Find and replace \n\n\t" +
+            "/file=\"SOURCE_FILE\" /find=\"FIND_TEXT\" /replace=\"REPLACE_TEXT\" [/log=\"output.txt\"]\n";
+    private static final String COMPRESS = "-compress             Generic compresser\n\n\t" +
+            "/src=\"SOURCE\" /destFile=\"DESTINATION_FILE\" [/log=\"output.txt\"]\n";
+    private static final String DECOMPRESS = "-decompress             Generic decompresser\n\n\t" +
+            "/srcFile=\"SOURCE_FILE\" /destDir=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
     private static final String ZIP = "-zip             Zip file or directory\n\n\t" +
             "/src=\"SOURCE_FILE\" /destFile=\"DESTINATION_PATH\" [/log=\"output.txt\"]\n";
     private static final String PASSWORD = "-password             Write encrypt password to file\n\n\t" +
@@ -78,5 +84,8 @@ public class HelpCommand extends AbstractCommand {
         logger.info(SQL);
         logger.info(UNSQL);
         logger.info(HIERARCHY);
+        logger.info(DECOMPRESS);
+        logger.info(COMPRESS);
+        logger.info(FERP);
     }
 }

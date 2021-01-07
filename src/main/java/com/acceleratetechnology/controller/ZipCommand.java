@@ -1,7 +1,7 @@
 package com.acceleratetechnology.controller;
 
 import com.acceleratetechnology.controller.exceptions.MissedParameterException;
-import net.lingala.zip4j.ZipFile;
+import com.acceleratetechnology.utils.Compressors;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.log4j.Logger;
 
@@ -33,11 +33,15 @@ public class ZipCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute() throws MissedParameterException, ZipException {
+    public void execute() throws MissedParameterException {
         String src = getRequiredAttribute(SRC);
         String dest = getRequiredAttribute(DEST_FILE_PARAM);
 
-        zip(src, dest);
+        try {
+            zip(src, dest);
+        } catch (Exception e) {
+            logger.error("ERROR - " + e.getMessage());
+        }
         logResponse("Zipped.");
     }
 
@@ -48,15 +52,11 @@ public class ZipCommand extends AbstractCommand {
      * @param destDir Destination file directory.
      * @throws ZipException Zip exception.
      */
-    private void zip(String srcDir, String destDir) throws ZipException {
+    private void zip(String srcDir, String destDir) throws Exception {
         logger.trace("ZipCommand.Zip operation start");
 
-        Path srcPath = Paths.get(srcDir);
         Path destPath = Paths.get(destDir);
-
-        File srcFile = srcPath.toFile();
         File destFile = destPath.toAbsolutePath().toFile();
-
         File parentFile = destFile.getParentFile();
 
         logger.trace("Check if destination directory \"" + destDir + "\" exists.");
@@ -68,15 +68,8 @@ public class ZipCommand extends AbstractCommand {
         }
         logger.trace("Checked.");
 
-        ZipFile zipFile = new ZipFile(destFile);
-        logger.trace("Check directory to zip");
-        if (srcFile.isDirectory()) {
-            logger.trace("Adding file.");
-            zipFile.addFolder(srcFile);
-        } else {
-            logger.trace("Adding directory to zip");
-            zipFile.addFile(srcFile);
-        }
+        Compressors.compress(srcDir, destDir);
+
         logger.trace("Done.");
         logger.trace("Checked.");
     }
