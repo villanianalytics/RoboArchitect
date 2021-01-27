@@ -58,6 +58,8 @@
                                     </classPath>
                                     <jre>
                                         <path>java</path>
+                                        <initialHeapSize>256</initialHeapSize>
+                                        <maxHeapSize>2048</maxHeapSize>
                                     </jre>
                                     <versionInfo>
                                         <fileVersion>1.0.0.0</fileVersion>
