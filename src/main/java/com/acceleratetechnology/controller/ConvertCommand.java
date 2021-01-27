@@ -192,6 +192,8 @@ public class ConvertCommand extends AbstractCommand {
             for (int rowNum = 0; rowNum <= rowTotal; rowNum++) {
                 for (int colNum = 0; colNum < totalColumns; colNum++) {
                     Row row = my_worksheet.getRow(rowNum);
+                    if (row == null) continue;
+
                     Cell cell = row.getCell(colNum);
                     if (cell == null) {
                         csvData[colNum] = "";
